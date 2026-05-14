@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>הקרנה פרטית אילת 🍿</title>
+    <meta name="description" content="אתר ההקרנות הפרטי של אילת. בואו לבחור סרטים וסדרות לצפייה משותפת מהנה.">
+    <meta name="keywords" content="הקרנה פרטית אילת, סרטים לצפייה, סדרות מומלצות, הקרנה פרטית">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3418/3418886.png" type="image/x-icon">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; }
+        header { background: #111; padding: 15px 5%; display: flex; flex-direction: column; gap: 15px; border-bottom: 2px solid #e50914; position: sticky; top: 0; z-index: 100; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo { font-size: 1.8rem; font-weight: bold; color: #e50914; display: flex; align-items: center; gap: 10px; }
+        .auth-buttons button { background: transparent; color: white; border: 1px solid white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .nav-links button { background: #222; color: white; border: 2px solid transparent; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .nav-links button.active { background: #e50914; border-color: white; }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 5%; }
+        .movie-card { background: #1a1d24; padding: 15px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .movie-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 8px; }
+        .modal { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#1a1d24; padding:25px; z-index:200; width:90%; max-width:450px; border:2px solid #e50914; border-radius:15px; box-shadow: 0 0 30px black; max-height: 85vh; overflow-y: auto; }
+        .btn-action { background: #e50914; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn-cancel { background: transparent; color: #aaa; border: none; margin-top: 5px; cursor: pointer; width: 100%; }
+        .rating { color: #ffcc00; font-size: 1.1rem; margin: 8px 0; }
+        .rating span { cursor: pointer; }
+        .avg-rating { font-size: 0.85rem; color: #aaa; margin-right: 5px; }
+        .btn-magic { background: linear-gradient(45deg, #ffcc00, #e50914); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box; background: #333; color: white; border: 1px solid #444; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="top-row">
+        <div class="logo"><span>🍿</span> MOVIE HUB</div>
+        <div class="auth-buttons" id="authBox"><button onclick="openModal('loginModal')">התחברות</button><button onclick="openModal('regModal')">הרשמה</button></div>
+    </div>
+    <div class="nav-links">
+        <button onclick="setFilter('type', 'סרט', this)">סרטים</button>
+        <button onclick="setFilter('type', 'סדרה', this)">סדרות</button>
+        <button onclick="setFilter('cat', 'אקשן', this)">אקשן</button>
+        <button onclick="setFilter('cat', 'קומדיה', this)">קומדיה</button>
+        <button onclick="setFilter('cat', 'פנטזיה', this)">פנטזיה</button>
+        <button onclick="setFilter('cat', 'רומנטיקה', this)">רומנטיקה</button>
+        <button onclick="setFilter('cat', 'מדע בדיוני', this)">מדע בדיוני</button>
+        <button onclick="clearFilters()" style="background:#444">נקה סינון</button>
+    </div>
+</header>
+
+<div style="text-align: center; padding: 20px;">
+    <h1 id="welcomeTitle">הקרנה פרטית אילת 🎬</h1>
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-action" style="width: auto; padding: 10px 30px;" onclick="openModal('addModal')">+ הוסף תוכן חדש</button>
+        <button class="btn-magic" onclick="openModal('recModal')">✨ מה מתחשק לי?</button>
+        <button id="personalRecBtn" class="btn-magic" style="display:none; background: #4ea8de;" onclick="getPersonalRecommendation()">👤 המלצה אישית</button>
+    </div>
+</div>
+
+<div class="movie-grid" id="grid"></div>
+
+<div id="addModal" class="modal">
+    <h3>הוספת סרט/סדרה חדשה</h3>
+    <input type="text" id="m-name" placeholder="שם הסרט/סדרה">
+    <input type="text" id="m-img" placeholder="לינק לתמונת פוסטר">
+    <textarea id="m-desc" placeholder="תקציר העלילה..."></textarea>
+    <input type="text" id="m-trailer" placeholder="לינק לטריילר (YouTube)">
+    <input type="text" id="m-watch" placeholder="לינק לצפייה ישירה">
+    <select id="m-type"><option value="סרט">סרט</option><option value="סדרה">סדרה</option></select>
+    <select id="m-cat">
+        <option value="אקשן">אקשן</option><option value="קומדיה">קומדיה</option><option value="פנטזיה">פנטזיה</option>
+        <option value="רומנטיקה">רומנטיקה</option><option value="מדע בדיוני">מדע בדיוני</option>
+    </select>
+    <button class="btn-action" onclick="saveMovie()">שמור בספריה</button>
+    <button class="btn-cancel" onclick="closeModal('addModal')">ביטול וסגירה</button>
+</div>
+
+<div id="loginModal" class="modal">
+    <h3>התחברות</h3>
+    <input type="text" id="loginId" placeholder="אימייל או מספר טלפון">
+    <button class="btn-action" onclick="handleAuth()">התחבר</button>
+    <button class="btn-cancel" onclick="closeModal('loginModal')">סגור</button>
+</div>
+
+<div id="regModal" class="modal">
+    <h3>הרשמה</h3>
+    <input type="text" placeholder="שם מלא">
+    <input type="email" id="regEmail" placeholder="אימייל">
+    <input type="tel" id="regPhone" placeholder="מספר טלפון">
+    <button class="btn-action" onclick="handleAuth()">הירשם</button>
+    <button class="btn-cancel" onclick="closeModal('regModal')">סגור</button>
+</div>
+
+<div id="infoModal" class="modal">
+    <div id="infoContent"></div>
+    <button class="btn-action" onclick="closeModal('infoModal')">סגור</button>
+</div>
+
+<div id="recModal" class="modal">
+    <h3>מה בא לך לראות?</h3>
+    <input type="text" id="userMood" placeholder="תאר בקצרה (למשל: סרט מצחיק)...">
+    <button class="btn-action" onclick="processMoodRec()">מצא לי!</button>
+    <div id="recResult" style="margin-top:10px;"></div>
+    <button class="btn-cancel" onclick="closeModal('recModal')">סגור</button>
+</div>
+
+<script>
+    let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+    let isAdmin = false;
+    let isConnected = false;
+    let currentFilters = { type: 'all', cat: 'all' };
+    const ADMIN_DATA = { mail: "asayelet7@gmail.com", phone: "0587204600" };
+
+    function handleAuth() {
+        let id = document.getElementById('loginId').value || document.getElementById('regEmail').value;
+        isConnected = true;
+        if (id === ADMIN_DATA.mail || id === ADMIN_DATA.phone) isAdmin = true;
+        document.getElementById('authBox').innerHTML = `<button onclick="location.reload()">התנתק</button>`;
+        document.getElementById('personalRecBtn').style.display = 'inline-block';
+        closeModal('loginModal'); closeModal('regModal');
+        render();
+    }
+
+    function render() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = movies.filter(m => {
+            const tM = currentFilters.type === 'all' || m.type === currentFilters.type;
+            const cM = currentFilters.cat === 'all' || m.cat === currentFilters.cat;
+            return tM && cM;
+        }).map((m, index) => {
+            const avg = m.rating > 0 ? ((m.rating + 4.1) / 2).toFixed(1) : "0.0";
+            return `
+            <div class="movie-card">
+                <img src="${m.img}" onerror="this.src='https://via.placeholder.com/250x350'">
+                <h3>${m.name}</h3>
+                <div class="rating">
+                    ${[1,2,3,4,5].map(s => `<span onclick="toggleRate(${index}, ${s})">${(m.rating || 0) >= s ? '★' : '☆'}</span>`).join('')}
+                    <span class="avg-rating">(${avg} ⭐)</span>
+                </div>
+                <button class="btn-action" style="background:#333; margin-bottom:5px;" onclick="showDetails(${index})">ℹ️ פרטים נוספים</button>
+                <div style="display:flex; gap:5px;">
+                    <a href="${m.trailer}" target="_blank" style="flex:1; background:#e50914; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem;">טריילר</a>
+                    <a href="${m.watch}" target="_blank" style="flex:1; background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem;">צפייה</a>
+                </div>
+                ${isAdmin ? `<button onclick="deleteMovie(${index})" style="background:#222; color:red; border:1px solid red; width:100%; cursor:pointer; padding:5px; border-radius:5px; margin-top:10px;">מחק סרט</button>` : ''}
+            </div>`}).join('');
+    }
+
+    function showDetails(i) {
+        const m = movies[i];
+        document.getElementById('infoContent').innerHTML = `
+            <h2 style="color:#e50914;">${m.name}</h2>
+            <p><strong>ז'אנר:</strong> ${m.cat} | <strong>סוג:</strong> ${m.type}</p>
+            <p><strong>תקציר:</strong><br>${m.desc || 'אין תקציר'}</p>
+            <hr style="opacity:0.1">
+            <h4>תגובות:</h4>
+            <div style="max-height:80px; overflow-y:auto; font-size:0.85rem;">
+                ${(m.comments || []).map(c => `<p style="border-bottom:1px solid #333;">• ${c}</p>`).join('')}
+            </div>
+            <div style="display:flex; gap:5px; margin-top:10px;">
+                <input type="text" id="newC" placeholder="הוסף תגובה..." style="margin:0;">
+                <button onclick="addComment(${i})" style="background:#e50914; border:none; color:white; padding:5px 12px; border-radius:5px; cursor:pointer;">שלח</button>
+            </div>
+        `;
+        openModal('infoModal');
+    }
+
+    function addComment(i) {
+        const val = document.getElementById('newC').value;
+        if(val) {
+            if(!movies[i].comments) movies[i].comments = [];
+            movies[i].comments.push(val);
+            localStorage.setItem('myMovies', JSON.stringify(movies));
+            showDetails(i);
+        }
+    }
+
+    function toggleRate(movieIndex, score) {
+        if (movies[movieIndex].rating === score) movies[movieIndex].rating = 0;
+        else movies[movieIndex].rating = score;
+        localStorage.setItem('myMovies', JSON.stringify(movies));
+        render();
+    }
+
+    function saveMovie() {
+        const m = {
+            name: document.getElementById('m-name').value,
+            img: document.getElementById('m-img').value,
+            desc: document.getElementById('m-desc').value,
+            trailer: document.getElementById('m-trailer').value,
+            watch: document.getElementById('m-watch').value,
+            type: document.getElementById('m-type').value,
+            cat: document.getElementById('m-cat').value,
+            rating: 0, comments: []
+        };
+        if(!m.name) return alert("חובה להזין שם לסרט");
+        movies.push(m);
+        localStorage.setItem('myMovies', JSON.stringify(movies));
+        render(); closeModal('addModal');
+        document.querySelectorAll('#addModal input, #addModal textarea').forEach(i => i.value = '');
+    }
+
+    function processMoodRec() {
+        const mood = document.getElementById('userMood').value.toLowerCase();
+        let found = movies.find(m => m.desc.toLowerCase().includes(mood) || m.cat.toLowerCase().includes(mood));
+        if (found) {
+            document.getElementById('recResult').innerHTML = `
+                <div style="background:#222; padding:10px; border-radius:10px;">
+                    <strong>המלצה: ${found.name}</strong><br>
+                    <a href="${found.watch}" target="_blank" style="color:#ffcc00;">לחץ לצפייה</a>
+                </div>`;
+        } else {
+            document.getElementById('recResult').innerHTML = `<p>נסה מילת חיפוש אחרת...</p>`;
+        }
+    }
+
+    function getPersonalRecommendation() {
+        let best = movies.filter(m => m.rating >= 4);
+        if (best.length === 0) return alert("דרג קודם סרטים ב-4 או 5 כוכבים!");
+        let favCat = best[Math.floor(Math.random() * best.length)].cat;
+        let rec = movies.find(m => m.cat === favCat && m.rating === 0) || best[0];
+        alert(`אנחנו חושבים שתאהב את: ${rec.name} (ז'אנר ${favCat})`);
+    }
+
+    function deleteMovie(i) { if(confirm("למחוק סרט זה?")) { movies.splice(i, 1); localStorage.setItem('myMovies', JSON.stringify(movies)); render(); } }
+    function setFilter(k, v, el) { currentFilters[k] = v; document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active')); el.classList.add('active'); render(); }
+    function clearFilters() { currentFilters = { type: 'all', cat: 'all' }; document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active')); render(); }
+    function openModal(id) { document.getElementById(id).style.display = 'block'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    render();
+</script>
+</body>
+</html>

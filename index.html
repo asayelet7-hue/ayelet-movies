@@ -9,9 +9,13 @@
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; }
         header { background: #111; padding: 15px 5%; display: flex; flex-direction: column; gap: 15px; border-bottom: 2px solid #e50914; position: sticky; top: 0; z-index: 100; }
-        .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .logo { font-size: 1.8rem; font-weight: bold; color: #e50914; display: flex; align-items: center; gap: 10px; }
-        .auth-buttons button { background: transparent; color: white; border: 1px solid white; padding: 5px 12px; border-radius: 5px; cursor: pointer; }
+        .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 15px; }
+        .logo { font-size: 1.8rem; font-weight: bold; color: #e50914; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+        .search-container { flex-grow: 1; max-width: 400px; margin: 0 20px; }
+        .search-container input { margin: 0; padding: 8px 15px; background: #222; border: 1px solid #444; border-radius: 20px; }
+        .search-container input:focus { border-color: #e50914; outline: none; }
+        .auth-buttons { display: flex; gap: 10px; }
+        .auth-buttons button { background: transparent; color: white; border: 1px solid white; padding: 5px 12px; border-radius: 5px; cursor: pointer; white-space: nowrap; }
         .nav-links { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .nav-links button { background: #222; color: white; border: 2px solid transparent; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
         .nav-links button.active { background: #e50914; border-color: white; }
@@ -26,6 +30,7 @@
         .avg-rating { font-size: 0.85rem; color: #aaa; margin-right: 5px; }
         .btn-magic { background: linear-gradient(45deg, #ffcc00, #e50914); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
         input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box; background: #333; color: white; border: 1px solid #444; border-radius: 5px; }
+        .loading { text-align: center; color: #aaa; padding: 50px; font-size: 1.2rem; grid-column: 1/-1; }
     </style>
 </head>
 <body>
@@ -33,16 +38,28 @@
 <header>
     <div class="top-row">
         <div class="logo"><span>🍿</span> MOVIE HUB</div>
-        <div class="auth-buttons" id="authBox"><button onclick="openModal('loginModal')">התחברות</button><button onclick="openModal('regModal')">הרשמה</button></div>
+        <div class="search-container">
+            <input type="text" id="globalSearch" placeholder="חיפוש סרט או סדרה..." oninput="render()">
+        </div>
+        <div class="auth-buttons" id="authBox">
+            <button onclick="openModal('loginModal')">התחברות</button>
+            <button onclick="openModal('regModal')">הרשמה</button>
+        </div>
     </div>
     <div class="nav-links">
-        <button onclick="setFilter('type', 'סרט', this)">סרטים</button>
-        <button onclick="setFilter('type', 'סדרה', this)">סדרות</button>
-        <button onclick="setFilter('cat', 'אקשן', this)">אקשן</button>
-        <button onclick="setFilter('cat', 'קומדיה', this)">קומדיה</button>
-        <button onclick="setFilter('cat', 'פנטזיה', this)">פנטזיה</button>
-        <button onclick="setFilter('cat', 'רומנטיקה', this)">רומנטיקה</button>
-        <button onclick="setFilter('cat', 'מדע בדיוני', this)">מדע בדיוני</button>
+        <button data-type="סרט" onclick="setFilter('type', 'סרט', this)">סרטים</button>
+        <button data-type="סדרה" onclick="setFilter('type', 'סדרה', this)">סדרות</button>
+        <span style="color: #444; margin: 0 5px;">|</span>
+        <button data-cat="אקשן" onclick="setFilter('cat', 'אקשן', this)">אקשן</button>
+        <button data-cat="קומדיה" onclick="setFilter('cat', 'קומדיה', this)">קומדיה</button>
+        <button data-cat="פנטזיה" onclick="setFilter('cat', 'פנטזיה', this)">פנטזיה</button>
+        <button data-cat="רומנטיקה" onclick="setFilter('cat', 'רומנטיקה', this)">רומנטיקה</button>
+        <button data-cat="מדע בדיוני" onclick="setFilter('cat', 'מדע בדיוני', this)">מדע בדיוני</button>
+        <button data-cat="אימה" onclick="setFilter('cat', 'אימה', this)">אימה</button>
+        <button data-cat="דרמה" onclick="setFilter('cat', 'דרמה', this)">דרמה</button>
+        <button data-cat="אנימציה" onclick="setFilter('cat', 'אנימציה', this)">אנימציה</button>
+        <button data-cat="מתח" onclick="setFilter('cat', 'מתח', this)">מתח</button>
+        <button data-cat="דוקומנטרי" onclick="setFilter('cat', 'דוקומנטרי', this)">דוקומנטרי</button>
         <button onclick="clearFilters()" style="background:#444">נקה סינון</button>
     </div>
 </header>
@@ -56,7 +73,9 @@
     </div>
 </div>
 
-<div class="movie-grid" id="grid"></div>
+<div class="movie-grid" id="grid">
+    <div class="loading">טוען סרטים מהענן... ☁️</div>
+</div>
 
 <div id="addModal" class="modal">
     <h3>הוספת סרט/סדרה חדשה</h3>
@@ -67,8 +86,16 @@
     <input type="text" id="m-watch" placeholder="לינק לצפייה ישירה">
     <select id="m-type"><option value="סרט">סרט</option><option value="סדרה">סדרה</option></select>
     <select id="m-cat">
-        <option value="אקשן">אקשן</option><option value="קומדיה">קומדיה</option><option value="פנטזיה">פנטזיה</option>
-        <option value="רומנטיקה">רומנטיקה</option><option value="מדע בדיוני">מדע בדיוני</option>
+        <option value="אקשן">אקשן</option>
+        <option value="קומדיה">קומדיה</option>
+        <option value="פנטזיה">פנטזיה</option>
+        <option value="רומנטיקה">רומנטיקה</option>
+        <option value="מדע בדיוני">מדע בדיוני</option>
+        <option value="אימה">אימה</option>
+        <option value="דרמה">דרמה</option>
+        <option value="אנימציה">אנימציה</option>
+        <option value="מתח">מתח</option>
+        <option value="דוקומנטרי">דוקומנטרי</option>
     </select>
     <button class="btn-action" onclick="saveMovie()">שמור בספריה</button>
     <button class="btn-cancel" onclick="closeModal('addModal')">ביטול וסגירה</button>
@@ -77,16 +104,16 @@
 <div id="loginModal" class="modal">
     <h3>התחברות</h3>
     <input type="text" id="loginId" placeholder="אימייל או מספר טלפון">
-    <button class="btn-action" onclick="handleAuth()">התחבר</button>
+    <button class="btn-action" onclick="handleAuth('login')">התחבר</button>
     <button class="btn-cancel" onclick="closeModal('loginModal')">סגור</button>
 </div>
 
 <div id="regModal" class="modal">
     <h3>הרשמה</h3>
-    <input type="text" placeholder="שם מלא">
+    <input type="text" id="regName" placeholder="שם מלא">
     <input type="email" id="regEmail" placeholder="אימייל">
     <input type="tel" id="regPhone" placeholder="מספר טלפון">
-    <button class="btn-action" onclick="handleAuth()">הירשם</button>
+    <button class="btn-action" onclick="handleAuth('reg')">הירשם</button>
     <button class="btn-cancel" onclick="closeModal('regModal')">סגור</button>
 </div>
 
@@ -104,14 +131,52 @@
 </div>
 
 <script>
-    let movies = JSON.parse(localStorage.getItem('myMovies')) || [];
+    // הקישור האישי שלך ל-Firebase משולב כאן בצורה אוטומטית!
+    const FIREBASE_URL = "https://privatescreening-2c38d-default-rtdb.firebaseio.com/movies.json";
+
+    let movies = [];
+    let movieKeys = []; 
     let isAdmin = false;
     let isConnected = false;
     let currentFilters = { type: 'all', cat: 'all' };
     const ADMIN_DATA = { mail: "asayelet7@gmail.com", phone: "0587204600" };
+    let openModalsList = [];
 
-    function handleAuth() {
-        let id = document.getElementById('loginId').value || document.getElementById('regEmail').value;
+    // מביא את הסרטים מהענן ברגע שהאתר נפתח
+    async function loadMoviesFromCloud() {
+        try {
+            const response = await fetch(FIREBASE_URL);
+            const data = await response.json();
+            movies = [];
+            movieKeys = [];
+            
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    movieKeys.push(key);
+                    movies.push(data[key]);
+                });
+            }
+            render();
+        } catch (error) {
+            console.error(error);
+            document.getElementById('grid').innerHTML = `<p style="grid-column:1/-1; text-align:center; color:red;">שגיאה בתקשורת עם הענן.</p>`;
+        }
+    }
+
+    // מעדכן נתונים קיימים בענן (כמו תגובה חדשה או דירוג כוכבים)
+    async function updateMovieInCloud(index) {
+        const firebaseKey = movieKeys[index];
+        const singleMovieUrl = FIREBASE_URL.replace(".json", `/${firebaseKey}.json`);
+        await fetch(singleMovieUrl, {
+            method: 'PUT',
+            body: JSON.stringify(movies[index])
+        });
+        loadMoviesFromCloud();
+    }
+
+    function handleAuth(type) {
+        let id = type === 'login' ? document.getElementById('loginId').value.trim() : (document.getElementById('regEmail').value.trim() || document.getElementById('regPhone').value.trim());
+        if(!id) return alert("אנא מלא את שדות החובה");
         isConnected = true;
         if (id === ADMIN_DATA.mail || id === ADMIN_DATA.phone) isAdmin = true;
         document.getElementById('authBox').innerHTML = `<button onclick="location.reload()">התנתק</button>`;
@@ -122,94 +187,119 @@
 
     function render() {
         const grid = document.getElementById('grid');
-        grid.innerHTML = movies.filter(m => {
+        const searchQuery = document.getElementById('globalSearch').value.toLowerCase().trim();
+
+        const filteredMovies = movies.filter(m => {
             const tM = currentFilters.type === 'all' || m.type === currentFilters.type;
             const cM = currentFilters.cat === 'all' || m.cat === currentFilters.cat;
-            return tM && cM;
-        }).map((m, index) => {
+            const sM = !searchQuery || (m.name && m.name.toLowerCase().includes(searchQuery));
+            return tM && cM && sM;
+        });
+
+        if(filteredMovies.length === 0 && movies.length > 0) {
+            grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">לא נמצאו תוצאות להתאמה הנוכחית...</p>`;
+            return;
+        } else if (movies.length === 0) {
+            grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">הספריה בענן ריקה. לחץ על 'הוסף תוכן חדש' כדי להעלות סרט ראשון שכולם יוכלו לראות!</p>`;
+            return;
+        }
+
+        grid.innerHTML = filteredMovies.map((m) => {
+            const actualIndex = movies.indexOf(m);
             const avg = m.rating > 0 ? ((m.rating + 4.1) / 2).toFixed(1) : "0.0";
             return `
             <div class="movie-card">
                 <img src="${m.img}" onerror="this.src='https://via.placeholder.com/250x350'">
                 <h3>${m.name}</h3>
                 <div class="rating">
-                    ${[1,2,3,4,5].map(s => `<span onclick="toggleRate(${index}, ${s})">${(m.rating || 0) >= s ? '★' : '☆'}</span>`).join('')}
+                    ${[1,2,3,4,5].map(s => `<span onclick="toggleRate(${actualIndex}, ${s})">${(m.rating || 0) >= s ? '★' : '☆'}</span>`).join('')}
                     <span class="avg-rating">(${avg} ⭐)</span>
                 </div>
-                <button class="btn-action" style="background:#333; margin-bottom:5px;" onclick="showDetails(${index})">ℹ️ פרטים נוספים</button>
+                <button class="btn-action" style="background:#333; margin-bottom:5px;" onclick="showDetails(${actualIndex})">ℹ️ פרטים נוספים</button>
                 <div style="display:flex; gap:5px;">
-                    <a href="${m.trailer}" target="_blank" style="flex:1; background:#e50914; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem;">טריילר</a>
-                    <a href="${m.watch}" target="_blank" style="flex:1; background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem;">צפייה</a>
+                    <a href="${m.trailer}" target="_blank" style="flex:1; background:#e50914; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">טריילר</a>
+                    <a href="${m.watch}" target="_blank" style="flex:1; background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">צפייה</a>
                 </div>
-                ${isAdmin ? `<button onclick="deleteMovie(${index})" style="background:#222; color:red; border:1px solid red; width:100%; cursor:pointer; padding:5px; border-radius:5px; margin-top:10px;">מחק סרט</button>` : ''}
+                ${isAdmin ? `<button onclick="deleteMovie(${actualIndex})" style="background:#222; color:red; border:1px solid red; width:100%; cursor:pointer; padding:5px; border-radius:5px; margin-top:10px;">מחק סרט</button>` : ''}
             </div>`}).join('');
     }
 
     function showDetails(i) {
         const m = movies[i];
         document.getElementById('infoContent').innerHTML = `
-            <h2 style="color:#e50914;">${m.name}</h2>
-            <p><strong>ז'אנר:</strong> ${m.cat} | <strong>סוג:</strong> ${m.type}</p>
+            <h2 style="color:#e50914; margin-top:0;">${m.name}</h2>
+            <p><strong>ז'אנר:</strong> ${m.cat || 'כללי'} | <strong>סוג:</strong> ${m.type || 'סרט'}</p>
             <p><strong>תקציר:</strong><br>${m.desc || 'אין תקציר'}</p>
             <hr style="opacity:0.1">
             <h4>תגובות:</h4>
-            <div style="max-height:80px; overflow-y:auto; font-size:0.85rem;">
-                ${(m.comments || []).map(c => `<p style="border-bottom:1px solid #333;">• ${c}</p>`).join('')}
+            <div style="max-height:120px; overflow-y:auto; font-size:0.85rem; background:#111; padding:10px; border-radius:5px; text-align:right;">
+                ${(m.comments || []).length > 0 ? m.comments.map(c => `<p style="border-bottom:1px solid #222; margin:5px 0; padding-bottom:5px;">• ${c}</p>`).join('') : '<p style="color:#666; margin:0;">אין תגובות עדיין.</p>'}
             </div>
             <div style="display:flex; gap:5px; margin-top:10px;">
                 <input type="text" id="newC" placeholder="הוסף תגובה..." style="margin:0;">
-                <button onclick="addComment(${i})" style="background:#e50914; border:none; color:white; padding:5px 12px; border-radius:5px; cursor:pointer;">שלח</button>
+                <button onclick="addComment(${i})" style="background:#e50914; border:none; color:white; padding:5px 12px; border-radius:5px; cursor:pointer; white-space:nowrap;">שלח</button>
             </div>
         `;
         openModal('infoModal');
     }
 
-    function addComment(i) {
-        const val = document.getElementById('newC').value;
+    async function addComment(i) {
+        const val = document.getElementById('newC').value.trim();
         if(val) {
             if(!movies[i].comments) movies[i].comments = [];
             movies[i].comments.push(val);
-            localStorage.setItem('myMovies', JSON.stringify(movies));
             showDetails(i);
+            await updateMovieInCloud(i);
         }
     }
 
-    function toggleRate(movieIndex, score) {
+    async function toggleRate(movieIndex, score) {
         if (movies[movieIndex].rating === score) movies[movieIndex].rating = 0;
         else movies[movieIndex].rating = score;
-        localStorage.setItem('myMovies', JSON.stringify(movies));
         render();
+        await updateMovieInCloud(movieIndex);
     }
 
-    function saveMovie() {
+    async function saveMovie() {
         const m = {
-            name: document.getElementById('m-name').value,
-            img: document.getElementById('m-img').value,
-            desc: document.getElementById('m-desc').value,
-            trailer: document.getElementById('m-trailer').value,
-            watch: document.getElementById('m-watch').value,
+            name: document.getElementById('m-name').value.trim(),
+            img: document.getElementById('m-img').value.trim(),
+            desc: document.getElementById('m-desc').value.trim(),
+            trailer: document.getElementById('m-trailer').value.trim(),
+            watch: document.getElementById('m-watch').value.trim(),
             type: document.getElementById('m-type').value,
             cat: document.getElementById('m-cat').value,
             rating: 0, comments: []
         };
         if(!m.name) return alert("חובה להזין שם לסרט");
-        movies.push(m);
-        localStorage.setItem('myMovies', JSON.stringify(movies));
-        render(); closeModal('addModal');
+        
+        await fetch(FIREBASE_URL, {
+            method: 'POST',
+            body: JSON.stringify(m)
+        });
+
+        closeModal('addModal');
         document.querySelectorAll('#addModal input, #addModal textarea').forEach(i => i.value = '');
+        loadMoviesFromCloud();
+    }
+
+    async function deleteMovie(i) { 
+        if(confirm("האם אתה בטוח שברצונך למחוק סרט זה מהענן?")) { 
+            const firebaseKey = movieKeys[i];
+            const singleMovieUrl = FIREBASE_URL.replace(".json", `/${firebaseKey}.json`);
+            await fetch(singleMovieUrl, { method: 'DELETE' });
+            loadMoviesFromCloud();
+        } 
     }
 
     function processMoodRec() {
-        const mood = document.getElementById('userMood').value.toLowerCase();
-        let found = movies.find(m => m.desc.toLowerCase().includes(mood) || m.cat.toLowerCase().includes(mood));
+        const mood = document.getElementById('userMood').value.toLowerCase().trim();
+        if(!mood) return alert("כתוב משהו כדי שנוכל לחפש!");
+        let found = movies.find(m => (m.desc && m.desc.toLowerCase().includes(mood)) || (m.cat && m.cat.toLowerCase().includes(mood)) || (m.name && m.name.toLowerCase().includes(mood)));
         if (found) {
-            document.getElementById('recResult').innerHTML = `
-                <div style="background:#222; padding:10px; border-radius:10px;">
-                    <strong>המלצה: ${found.name}</strong><br>
-                    <a href="${found.watch}" target="_blank" style="color:#ffcc00;">לחץ לצפייה</a>
-                </div>`;
+            document.getElementById('recResult').innerHTML = `<div style="background:#222; padding:10px; border-radius:10px; margin-top:10px; border: 1px solid #ffcc00;"><strong>המלצה: ${found.name}</strong><br><a href="${found.watch}" target="_blank" style="color:#ffcc00; display:inline-block; margin-top:5px;">לחץ לצפייה ישירה 🍿</a></div>`;
         } else {
-            document.getElementById('recResult').innerHTML = `<p>נסה מילת חיפוש אחרת...</p>`;
+            document.getElementById('recResult').innerHTML = `<p style="color:#aaa; font-size:0.9rem;">לא מצאנו התאמה... נסה מילת מפתח אחרת.</p>`;
         }
     }
 
@@ -218,16 +308,28 @@
         if (best.length === 0) return alert("דרג קודם סרטים ב-4 או 5 כוכבים!");
         let favCat = best[Math.floor(Math.random() * best.length)].cat;
         let rec = movies.find(m => m.cat === favCat && m.rating === 0) || best[0];
-        alert(`אנחנו חושבים שתאהב את: ${rec.name} (ז'אנר ${favCat})`);
+        alert(`על פי הדירוגים שלך, אנחנו חושבים שתאהב את: ${rec.name} (ז'אנר: ${favCat})`);
     }
+    
+    function setFilter(k, v, el) { 
+        currentFilters[k] = v; 
+        if(k === 'type') document.querySelectorAll('.nav-links button[data-type]').forEach(b => b.classList.remove('active'));
+        else if(k === 'cat') document.querySelectorAll('.nav-links button[data-cat]').forEach(b => b.classList.remove('active'));
+        el.classList.add('active'); render(); 
+    }
+    
+    function clearFilters() { 
+        currentFilters = { type: 'all', cat: 'all' }; 
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active')); 
+        document.getElementById('globalSearch').value = ''; render(); 
+    }
+    
+    function openModal(id) { document.getElementById(id).style.display = 'block'; if(!openModalsList.includes(id)) openModalsList.push(id); }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; openModalsList = openModalsList.filter(mId => mId !== id); if(id === 'recModal') document.getElementById('recResult').innerHTML = ''; }
 
-    function deleteMovie(i) { if(confirm("למחוק סרט זה?")) { movies.splice(i, 1); localStorage.setItem('myMovies', JSON.stringify(movies)); render(); } }
-    function setFilter(k, v, el) { currentFilters[k] = v; document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active')); el.classList.add('active'); render(); }
-    function clearFilters() { currentFilters = { type: 'all', cat: 'all' }; document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active')); render(); }
-    function openModal(id) { document.getElementById(id).style.display = 'block'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    window.addEventListener('keydown', function(event) { if (event.key === 'Escape' && openModalsList.length > 0) { closeModal(openModalsList[openModalsList.length - 1]); } });
 
-    render();
+    loadMoviesFromCloud();
 </script>
 </body>
 </html>

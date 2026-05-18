@@ -3,47 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <title>הקרנה פרטית אילת 🍿</title>
-    <meta name="description" content="אתר ההקרנות הפרטי של אילת. בואו לבחור סרטים וסדרות לצפייה משותפת מהנה.">
-    <meta name="keywords" content="הקרנה פרטית אילת, סרטים לצפייה, סדרות מומלצות, הקרנה פרטית">
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3418/3418886.png" type="image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; padding: 0; }
         header { background: #111; padding: 15px 5%; border-bottom: 2px solid #e50914; position: sticky; top: 0; z-index: 100; }
         .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
         .logo { font-size: 1.8rem; font-weight: bold; color: #e50914; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .search-container { flex-grow: 1; max-width: 400px; }
         .search-container input { width: 100%; margin: 0; padding: 8px 15px; background: #222; border: 1px solid #444; border-radius: 20px; color: white; box-sizing: border-box; }
         .search-container input:focus { border-color: #e50914; outline: none; }
-        .auth-buttons { display: flex; gap: 10px; align-items: center; }
-        .auth-buttons button, .btn-share { background: transparent; color: white; border: 1px solid white; padding: 5px 12px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
-        .btn-share { background: #1e293b; border-color: #38bdf8; color: #38bdf8; }
-        .btn-share:hover { background: #38bdf8; color: black; }
         
         .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .nav-links button { background: #222; color: white; border: 2px solid transparent; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
         .nav-links button.active { background: #e50914; border-color: white; }
-        .nav-links button.all-btn { background: #444; }
-        .nav-links button.all-btn.active { background: #fff; color: black; border-color: #444; }
         
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 15px; padding: 20px 5%; }
         .movie-card { background: #1a1d24; padding: 12px; border-radius: 12px; border: 1px solid #333; text-align: center; font-size: 0.9rem; display: flex; flex-direction: column; justify-content: space-between; }
         .movie-card h3 { font-size: 1.1rem; margin: 10px 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .movie-card img { width: 100%; height: 240px; object-fit: cover; border-radius: 8px; }
         
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; }
-        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1d24; padding: 25px; z-index: 200; width: 90%; max-width: 450px; border: 2px solid #e50914; border-radius: 15px; box-shadow: 0 0 30px black; max-height: 85vh; overflow-y: auto; }
-        
-        .btn-action { background: #e50914; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
-        .btn-cancel { background: transparent; color: #aaa; border: none; margin-top: 5px; cursor: pointer; width: 100%; }
-        .rating { color: #ffcc00; font-size: 1.1rem; margin: 5px 0; user-select: none; }
-        .rating span { cursor: pointer; transition: transform 0.1s; display: inline-block; }
-        .rating span:hover { transform: scale(1.2); }
-        .avg-rating { font-size: 0.85rem; color: #aaa; margin-right: 5px; }
-        
-        .status-actions { display: flex; justify-content: space-around; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; }
-        .status-btn { background: transparent; border: none; color: #666; cursor: pointer; font-size: 1.1rem; transition: 0.2s; display: flex; align-items: center; gap: 4px; }
-        .status-btn.active-want { color: #38bdf8; font-weight: bold; }
-        .status-btn.active-watched { color: #4ade80; font-weight: bold; }
+        .btn-action { background: #e50914; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
+        .loading { text-align: center; color: #aaa; padding: 50px; font-size: 1.2rem; grid-column: 1/-1; }
+    </style>
+</head>
+<body>
 
-        .btn-magic { background: linear-gradient(45deg, #ffcc00, #e50914); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
-        input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box; background:
+<header>
+    <div class="top-row">
+        <div class="logo"><span>🍿</span> MOVIE HUB</div>
+        <div class="search-container">
+            <input type="text" id="globalSearch" placeholder="חיפוש סרט או סדרה..." oninput="render()">
+        </div>
+    </div>
+    <div class="nav-links">
+        <button class="active" id="btn-all" onclick="clearFilters()">הכל</button>
+        <button onclick="filterType('סרט', this)">סרטים</button>
+        <button onclick="filterType('סדרה', this)">סדרות</button>
+    </div>
+</header>
+
+<div style="text-align: center; padding: 20px;">
+    <h1>הקרנה פרטית אילת 🎬</h1>
+</div>
+
+<div class="movie-grid" id="grid">
+    <div class="loading">טוען סרטים מהענן... ☁️</div>
+</div>
+
+<script>
+    const FIREBASE_URL = "https://privatescreening-2c38d-default-rtdb.firebaseio.com/movies.json";
+    let movies = [];
+    let currentFilterType = "";
+
+    async function loadMovies() {
+        try {
+            const response = await fetch(FIREBASE_URL);
+            const data = await response.json();
+            movies = [];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    if (data[key]) movies.push(data[key]);
+                });
+            }
+            render();
+        } catch (error) {
+            console.error("Error loading movies:", error);
+            document.getElementById('grid').innerHTML = '<div class="loading">שגיאה בטעינת הנתונים מהענן ❌</div>';
+        }
+    }
+
+    function filterType(type, btn) {
+        currentFilterType = type;
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+
+    function clearFilters() {
+        currentFilterType = "";
+        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-all').classList.add('active');
+        render();
+    }
+
+    function render() {
+        const grid = document.getElementById('grid');
+        const searchVal = document.getElementById('globalSearch').value.toLowerCase();
+        grid.innerHTML = '';
+
+        const filtered = movies.filter(m => {
+            if (!m || !m.name) return false;
+            const matchSearch = m.name.toLowerCase().includes(searchVal) || (m.desc && m.desc.toLowerCase().includes(searchVal));
+            const matchType = !currentFilterType || m.type === currentFilterType;
+            return matchSearch && matchType;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="loading">לא נמצאו סרטים או סדרות להתאמה זו 🍿</div>';
+            return;
+        }
+
+        filtered.forEach(m => {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            
+            let actionButton = '';
+            if (m.watch) {
+                actionButton = `<a href="${m.watch}" target="_blank" class="btn-action">📺 לצפייה ישירה</a>`;
+            } else if (m.trailer) {
+                actionButton = `<a href="${m.trailer}" target="_blank" class="btn-action">🎬 לצפייה בטריילר</a>`;
+            } else {
+                actionButton = `<button class="btn-action" style="background:#444; cursor:default;">אין לינק זמין</button>`;
+            }
+
+            card.innerHTML = `
+                <img src="${m.img || 'https://via.placeholder.com/190x240'}" alt="${m.name}">
+                <h3>${m.name}</h3>
+                <p style="color:#aaa; font-size:0.8rem; margin:5px 0; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${m.desc || 'אין תקציר'}</p>
+                ${actionButton}
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    window.onload = function() {
+        loadMovies();
+    };
+</script>
+</body>
+</html>

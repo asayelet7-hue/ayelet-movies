@@ -4,29 +4,57 @@
     <meta charset="UTF-8">
     <title>הקרנה פרטית אילת 🍿</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3418/3418886.png" type="image/x-icon">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #080a10; color: white; margin: 0; }
         header { background: #111; padding: 15px 5%; border-bottom: 2px solid #e50914; position: sticky; top: 0; z-index: 100; }
         .top-row { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
         .logo { font-size: 1.8rem; font-weight: bold; color: #e50914; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
         .search-container { flex-grow: 1; max-width: 400px; }
         .search-container input { width: 100%; margin: 0; padding: 8px 15px; background: #222; border: 1px solid #444; border-radius: 20px; color: white; box-sizing: border-box; }
         .search-container input:focus { border-color: #e50914; outline: none; }
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
+        .auth-buttons button, .btn-share { background: transparent; color: white; border: 1px solid white; padding: 5px 12px; border-radius: 5px; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .btn-share { background: #1e293b; border-color: #38bdf8; color: #38bdf8; }
+        .btn-share:hover { background: #38bdf8; color: black; }
         
         .nav-links { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .nav-links button { background: #222; color: white; border: 2px solid transparent; padding: 5px 12px; border-radius: 20px; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
         .nav-links button.active { background: #e50914; border-color: white; }
+        .nav-links button.all-btn { background: #444; }
+        .nav-links button.all-btn.active { background: #fff; color: black; border-color: #444; }
         
         .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 15px; padding: 20px 5%; }
         .movie-card { background: #1a1d24; padding: 12px; border-radius: 12px; border: 1px solid #333; text-align: center; font-size: 0.9rem; display: flex; flex-direction: column; justify-content: space-between; }
         .movie-card h3 { font-size: 1.1rem; margin: 10px 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .movie-card img { width: 100%; height: 240px; object-fit: cover; border-radius: 8px; }
         
-        .btn-action { background: #e50914; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; text-decoration: none; display: inline-block; box-sizing: border-box; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1a1d24; padding: 25px; z-index: 200; width: 90%; max-width: 450px; border: 2px solid #e50914; border-radius: 15px; box-shadow: 0 0 30px black; max-height: 85vh; overflow-y: auto; }
+        
+        .btn-action { background: #e50914; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn-cancel { background: transparent; color: #aaa; border: none; margin-top: 5px; cursor: pointer; width: 100%; }
+        .rating { color: #ffcc00; font-size: 1.1rem; margin: 5px 0; user-select: none; }
+        .rating span { cursor: pointer; display: inline-block; }
+        .avg-rating { font-size: 0.85rem; color: #aaa; margin-right: 5px; }
+        
+        .status-actions { display: flex; justify-content: space-around; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333; }
+        .status-btn { background: transparent; border: none; color: #666; cursor: pointer; font-size: 1.1rem; transition: 0.2s; display: flex; align-items: center; gap: 4px; }
+        .status-btn.active-want { color: #38bdf8; font-weight: bold; }
+        .status-btn.active-watched { color: #4ade80; font-weight: bold; }
+
+        .btn-magic { background: linear-gradient(45deg, #ffcc00, #e50914); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; }
+        input, select, textarea { width: 100%; margin: 5px 0; padding: 10px; box-sizing: border-box; background: #333; color: white; border: 1px solid #444; border-radius: 5px; font-family: inherit; }
         .loading { text-align: center; color: #aaa; padding: 50px; font-size: 1.2rem; grid-column: 1/-1; }
+        
+        .episode-row { display: flex; gap: 5px; margin-bottom: 5px; }
+        .episodes-box { background: #222; padding: 10px; border-radius: 5px; margin-top: 5px; border: 1px solid #444; }
+        .btn-whatsapp { background: #25D366; color: white; font-weight: bold; margin-top: 8px; display: block; width: 100%; text-decoration: none; padding: 10px 0; border-radius: 5px; font-size: 0.9rem; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
+
+<div id="modalOverlay" class="modal-overlay" onclick="closeAllModals()"></div>
 
 <header>
     <div class="top-row">
@@ -34,101 +62,331 @@
         <div class="search-container">
             <input type="text" id="globalSearch" placeholder="חיפוש סרט או סדרה..." oninput="render()">
         </div>
+        <div class="auth-buttons" id="authBox">
+            <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף האתר</button>
+            <button onclick="openModal('loginModal')">התחברות</button>
+            <button onclick="openModal('regModal')">הרשמה</button>
+        </div>
     </div>
     <div class="nav-links">
-        <button class="active" id="btn-all" onclick="clearFilters()">הכל</button>
-        <button onclick="filterType('סרט', this)">סרטים</button>
-        <button onclick="filterType('סדרה', this)">סדרות</button>
+        <button id="btn-all-types" class="all-btn active" onclick="clearTypeFilter(this)">הכל</button>
+        <button data-type="סרט" onclick="toggleTypeFilter('סרט', this)">סרטים</button>
+        <button data-type="סדרה" onclick="toggleTypeFilter('סדרה', this)">סדרות</button>
+        <span style="color: #444; margin: 0 5px;">|</span>
+        <button id="btn-all-cats" class="all-btn active" onclick="clearCatFilter(this)">הכל</button>
+        <button data-cat="אקשן" onclick="toggleCatFilter('אקשן', this)">אקשן</button>
+        <button data-cat="קומדיה" onclick="toggleCatFilter('קומדיה', this)">קומדיה</button>
+        <button data-cat="פנטזיה" onclick="toggleCatFilter('פנטזיה', this)">פנטזיה</button>
+        <button data-cat="רומנטיקה" onclick="toggleCatFilter('רומנטיקה', this)">רומנטיקה</button>
+        <button data-cat="מדע בדיוני" onclick="toggleCatFilter('מדע בדיוני', this)">מדע בדיוני</button>
+        <button data-cat="אימה" onclick="toggleCatFilter('אימה', this)">אימה</button>
+        <button data-cat="דרמה" onclick="toggleCatFilter('דרמה', this)">דרמה</button>
+        <button data-cat="אנימציה" onclick="toggleCatFilter('אנימציה', this)">אנימציה</button>
+        <button data-cat="מתח" onclick="toggleCatFilter('מתח', this)">מתח</button>
+        <button data-cat="דוקומנטרי" onclick="toggleCatFilter('דוקומנטרי', this)">דוקומנטרי</button>
+        <button data-cat="משפחה" onclick="toggleCatFilter('משפחה', this)">משפחה 👨‍👩‍👧‍👦</button>
+        <button data-cat="הרפתקאות" onclick="toggleCatFilter('הרפתקאות', this)">הרפתקאות 🗺️</button>
+        <button data-cat="גיבורי על" onclick="toggleCatFilter('גיבורי על', this)">גיבורי על 🦸‍♂️</button>
+        <button data-cat="סיפור אמיתי" onclick="toggleCatFilter('סיפור אמיתי', this)">סיפור אמיתי 📜</button>
     </div>
 </header>
 
 <div style="text-align: center; padding: 20px;">
-    <h1>הקרנה פרטית אילת 🎬</h1>
+    <h1 id="welcomeTitle">הקרנה פרטית אילת 🎬</h1>
+    <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-action" style="width: auto; padding: 10px 30px;" onclick="openAddModal()">+ הוסף תוכן חדש</button>
+        <button class="btn-magic" onclick="openModal('recModal')">✨ מה מתחשק לי?</button>
+        <button id="personalRecBtn" class="btn-magic" style="display:none; background: #4ea8de;" onclick="getPersonalRecommendation()">👤 המלצה אישית</button>
+    </div>
 </div>
 
 <div class="movie-grid" id="grid">
     <div class="loading">טוען סרטים מהענן... ☁️</div>
 </div>
 
+<div id="addModal" class="modal">
+    <h3 id="modalFormTitle">הוספת סרט/סדרה חדשה</h3>
+    <input type="hidden" id="edit-key">
+    <input type="text" id="m-name" placeholder="שם הסרט/סדרה">
+    <input type="text" id="m-img" placeholder="לינק לתמונת פוסטר">
+    <textarea id="m-desc" placeholder="תקציר העלילה..."></textarea>
+    <input type="text" id="m-trailer" placeholder="לינק לטריילר (YouTube)">
+    
+    <select id="m-type" onchange="toggleTypeFormFields()">
+        <option value="סרט">סרט</option>
+        <option value="סדרה">סדרה</option>
+    </select>
+    
+    <div id="seriesRouteField" style="display:none;">
+        <select id="m-series-route" onchange="toggleSeriesRouteFields()">
+            <option value="single">קישור אחד לכל הפרקים</option>
+            <option value="multi">קישור נפרד לכל פרק</option>
+        </select>
+    </div>
+
+    <div id="movieWatchField">
+        <input type="text" id="m-watch" placeholder="לינק לצפייה ישירה">
+    </div>
+
+    <div id="seriesEpisodesField" style="display:none;">
+        <label style="font-size:0.85rem; color:#aaa; display:block; margin-top:5px;">רשימת פרקים:</label>
+        <div class="episodes-box" id="episodesContainer"></div>
+        <button type="button" class="btn-action" style="background:#444; font-size:0.85rem; margin-top:5px;" onclick="addEpisodeRow('', '')">➕ הוסף פרק ספציפי</button>
+    </div>
+
+    <label style="font-size:0.85rem; color:#aaa; display:block; margin-top:5px;">בחרי ז'אנר אחד או יותר:</label>
+    <select id="m-cat" multiple style="height:120px;">
+        <option value="אקשן">אקשן</option>
+        <option value="קומדיה">קומדיה</option>
+        <option value="פנטזיה">פנטזיה</option>
+        <option value="רומנטיקה">רומנטיקה</option>
+        <option value="מדע בדיוני">מדע בדיוני</option>
+        <option value="אימה">אימה</option>
+        <option value="דרמה">דרמה</option>
+        <option value="אנימציה">אנימציה</option>
+        <option value="מתח">מתח</option>
+        <option value="דוקומנטרי">דוקומנטרי</option>
+        <option value="משפחה">משפחה</option>
+        <option value="הרפתקאות">הרפתקאות</option>
+        <option value="גיבורי על">גיבורי על</option>
+        <option value="סיפור אמיתי">סיפור אמיתי</option>
+    </select>
+    
+    <button class="btn-action" id="btnSubmitForm" onclick="saveMovie()">שמור בספריה</button>
+    <button class="btn-cancel" onclick="closeModal('addModal')">ביטול וסגירה</button>
+</div>
+
+<div id="loginModal" class="modal">
+    <h3>התחברות</h3>
+    <input type="text" id="loginId" placeholder="אימייל או מספר טלפון">
+    <button class="btn-action" onclick="handleAuth('login')">התחבר</button>
+    <button class="btn-cancel" onclick="closeModal('loginModal')">סגור</button>
+</div>
+
+<div id="regModal" class="modal">
+    <h3>הרשמה</h3>
+    <input type="text" id="regName" placeholder="שם מלא">
+    <input type="email" id="regEmail" placeholder="אימייל">
+    <input type="tel" id="regPhone" placeholder="מספר טלפון">
+    <button class="btn-action" onclick="handleAuth('reg')">הירשם</button>
+    <button class="btn-cancel" onclick="closeModal('regModal')">סגור</button>
+</div>
+
+<div id="infoModal" class="modal">
+    <div id="infoContent"></div>
+    <button class="btn-action" onclick="closeModal('infoModal')">סגור</button>
+</div>
+
+<div id="recModal" class="modal">
+    <h3>מה בא לך לראות?</h3>
+    <input type="text" id="userMood" placeholder="תאר בקצרה (למשל: סרט מצחיק)...">
+    <button class="btn-action" onclick="processMoodRec()">מצא לי!</button>
+    <div id="recResult" style="margin-top:10px;"></div>
+    <button class="btn-cancel" onclick="closeModal('recModal')">סגור</button>
+</div>
+
 <script>
-    const FIREBASE_URL = "https://privatescreening-2c38d-default-rtdb.firebaseio.com/movies.json";
+    const FIREBASE_BASE_URL = "https://privatescreening-2c38d-default-rtdb.firebaseio.com/movies";
+
     let movies = [];
-    let currentFilterType = "";
+    let movieKeys = []; 
+    let isAdmin = false;
+    let currentUser = null;
+    
+    let selectedTypes = [];
+    let selectedCats = [];
+    
+    let userWantToWatch = JSON.parse(localStorage.getItem('wantToWatch')) || [];
+    let userWatched = JSON.parse(localStorage.getItem('watched')) || [];
+    
+    const ADMIN_DATA = { mail: "asayelet7@gmail.com", phone: "0587204600" };
+
+    function openModal(id) {
+        document.getElementById('modalOverlay').style.display = 'block';
+        document.getElementById(id).style.display = 'block';
+    }
+    
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        const openModals = Array.from(document.querySelectorAll('.modal')).filter(m => m.style.display === 'block');
+        if(openModals.length === 0) document.getElementById('modalOverlay').style.display = 'none';
+    }
+    
+    function closeAllModals() {
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    }
+
+    function openAddModal() {
+        document.getElementById('modalFormTitle').innerText = "הוספת סרט/סדרה חדשה";
+        document.getElementById('edit-key').value = "";
+        document.getElementById('m-name').value = "";
+        document.getElementById('m-img').value = "";
+        document.getElementById('m-desc').value = "";
+        document.getElementById('m-trailer').value = "";
+        document.getElementById('m-watch').value = "";
+        document.getElementById('m-type').value = "סרט";
+        document.getElementById('m-series-route').value = "single";
+        document.getElementById('episodesContainer').innerHTML = "";
+        
+        const catSelect = document.getElementById('m-cat');
+        for (let i = 0; i < catSelect.options.length; i++) catSelect.options[i].selected = false;
+
+        toggleTypeFormFields();
+        openModal('addModal');
+    }
+
+    function toggleTypeFormFields() {
+        const type = document.getElementById('m-type').value;
+        if (type === 'סדרה') {
+            document.getElementById('seriesRouteField').style.display = 'block';
+            toggleSeriesRouteFields();
+        } else {
+            document.getElementById('seriesRouteField').style.display = 'none';
+            document.getElementById('movieWatchField').style.display = 'block';
+            document.getElementById('seriesEpisodesField').style.display = 'none';
+        }
+    }
+
+    function toggleSeriesRouteFields() {
+        const route = document.getElementById('m-series-route').value;
+        if (route === 'single') {
+            document.getElementById('movieWatchField').style.display = 'block';
+            document.getElementById('seriesEpisodesField').style.display = 'none';
+        } else {
+            document.getElementById('movieWatchField').style.display = 'none';
+            document.getElementById('seriesEpisodesField').style.display = 'block';
+        }
+    }
+
+    function addEpisodeRow(name = '', url = '') {
+        const container = document.getElementById('episodesContainer');
+        const div = document.createElement('div');
+        div.className = 'episode-row';
+        div.innerHTML = `
+            <input type="text" placeholder="פרק" value="${name}" class="ep-name" style="width: 35%;">
+            <input type="text" placeholder="לינק" value="${url}" class="ep-url" style="width: 50%;">
+            <button type="button" style="background:#e50914; color:white; width:12%; border:none; cursor:pointer;" onclick="this.parentElement.remove()">❌</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function clearTypeFilter(btn) {
+        selectedTypes = [];
+        document.querySelectorAll('[data-type]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+    
+    function toggleTypeFilter(type, btn) {
+        document.getElementById('btn-all-types').classList.remove('active');
+        if(selectedTypes.includes(type)) {
+            selectedTypes = selectedTypes.filter(t => t !== type);
+            btn.classList.remove('active');
+        } else {
+            selectedTypes.push(type);
+            btn.classList.add('active');
+        }
+        if(selectedTypes.length === 0) document.getElementById('btn-all-types').classList.add('active');
+        render();
+    }
+    
+    function clearCatFilter(btn) {
+        selectedCats = [];
+        document.querySelectorAll('[data-cat]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        render();
+    }
+    
+    function toggleCatFilter(cat, btn) {
+        document.getElementById('btn-all-cats').classList.remove('active');
+        if(selectedCats.includes(cat)) {
+            selectedCats = selectedCats.filter(c => c !== cat);
+            btn.classList.remove('active');
+        } else {
+            selectedCats.push(cat);
+            btn.classList.add('active');
+        }
+        if(selectedCats.length === 0) document.getElementById('btn-all-cats').classList.add('active');
+        render();
+    }
+
+    function handleAuth(type) {
+        if(type === 'login') {
+            const id = document.getElementById('loginId').value;
+            if(!id) return alert("נא להזין פרטי התחברות");
+            if(id === ADMIN_DATA.mail || id === ADMIN_DATA.phone) {
+                isAdmin = true;
+                currentUser = { name: "מנהל מערכת", id: id };
+                alert("ברוך הבא, מנהל מערכת!");
+            } else {
+                currentUser = { name: "משתמש חבר", id: id };
+                alert("מחובר כמשתמש רגיל");
+            }
+        } else {
+            const name = document.getElementById('regName').value;
+            if(!name) return alert("נא להזין שם להרשמה");
+            currentUser = { name: name, id: Date.now() };
+            alert("הרשמה בוצעה בהצלחה!");
+        }
+        document.getElementById('authBox').innerHTML = `<span style="color:#4ade80; font-weight:bold;">שלום, ${currentUser.name}</span>`;
+        document.getElementById('personalRecBtn').style.display = "inline-block";
+        closeAllModals();
+        render(); 
+    }
+
+    function shareWebsite() {
+        if (navigator.share) {
+            navigator.share({ title: 'הקרנה פרטית אילת', url: window.location.href });
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert("הקישור הועתק ללוח!");
+        }
+    }
 
     async function loadMovies() {
         try {
-            const response = await fetch(FIREBASE_URL);
+            const response = await fetch(`${FIREBASE_BASE_URL}.json`);
             const data = await response.json();
             movies = [];
+            movieKeys = [];
             if (data) {
                 Object.keys(data).forEach(key => {
-                    if (data[key]) movies.push(data[key]);
+                    movieKeys.push(key);
+                    movies.push(data[key]);
                 });
             }
             render();
         } catch (error) {
-            console.error("Error loading movies:", error);
-            document.getElementById('grid').innerHTML = '<div class="loading">שגיאה בטעינת הנתונים מהענן ❌</div>';
+            console.error(error);
+            document.getElementById('grid').innerHTML = '<div class="loading">שגיאה בטעינת הנתונים ❌</div>';
         }
     }
 
-    function filterType(type, btn) {
-        currentFilterType = type;
-        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        render();
-    }
-
-    function clearFilters() {
-        currentFilterType = "";
-        document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn-all').classList.add('active');
-        render();
-    }
-
-    function render() {
-        const grid = document.getElementById('grid');
-        const searchVal = document.getElementById('globalSearch').value.toLowerCase();
-        grid.innerHTML = '';
-
-        const filtered = movies.filter(m => {
-            if (!m || !m.name) return false;
-            const matchSearch = m.name.toLowerCase().includes(searchVal) || (m.desc && m.desc.toLowerCase().includes(searchVal));
-            const matchType = !currentFilterType || m.type === currentFilterType;
-            return matchSearch && matchType;
-        });
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '<div class="loading">לא נמצאו סרטים או סדרות להתאמה זו 🍿</div>';
-            return;
+    function getSelectedCategories() {
+        const select = document.getElementById('m-cat');
+        const result = [];
+        for (let option of select.options) {
+            if (option.selected) result.push(option.value);
         }
-
-        filtered.forEach(m => {
-            const card = document.createElement('div');
-            card.className = 'movie-card';
-            
-            let actionButton = '';
-            if (m.watch) {
-                actionButton = `<a href="${m.watch}" target="_blank" class="btn-action">📺 לצפייה ישירה</a>`;
-            } else if (m.trailer) {
-                actionButton = `<a href="${m.trailer}" target="_blank" class="btn-action">🎬 לצפייה בטריילר</a>`;
-            } else {
-                actionButton = `<button class="btn-action" style="background:#444; cursor:default;">אין לינק זמין</button>`;
-            }
-
-            card.innerHTML = `
-                <img src="${m.img || 'https://via.placeholder.com/190x240'}" alt="${m.name}">
-                <h3>${m.name}</h3>
-                <p style="color:#aaa; font-size:0.8rem; margin:5px 0; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${m.desc || 'אין תקציר'}</p>
-                ${actionButton}
-            `;
-            grid.appendChild(card);
-        });
+        return result;
     }
 
-    window.onload = function() {
-        loadMovies();
-    };
-</script>
-</body>
-</html>
+    function getEpisodesList() {
+        const names = document.querySelectorAll('.ep-name');
+        const urls = document.querySelectorAll('.ep-url');
+        const list = [];
+        names.forEach((el, i) => {
+            if(el.value) list.push({ name: el.value, url: urls[i].value });
+        });
+        return list;
+    }
+
+    async function saveMovie() {
+        const editKey = document.getElementById('edit-key').value;
+        const type = document.getElementById('m-type').value;
+        const route = document.getElementById('m-series-route').value;
+
+        const movieData = {
+            name: document.getElementById('m-name').value,
+            img: document.getElementB

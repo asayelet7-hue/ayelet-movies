@@ -12,5 +12,19 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "הארי פוטר 2",
+    "img": "https://cdn.simania.co.il/bookimages/covers32/321626.jpg",
+    "desc": "הסרט השני  הארי פוטר וחדר הסודות, עוקבים אחר שנת הלימודים השנייה של הארי בהוגוורטס. הארי מתעלם מאזהרות של שדון בית בשם דובי, ומגלה ש\"חדר הסודות\" האגדי נפתח. יחד עם רון והרמיוני, הוא יוצא לחשוף את יורש סלית'רין ואת המפלצת שבחדר.",
+    "trailer": "https://www.youtube.com/watch?v=g_nQBhPl_QA",
+    "type": "סרט",
+    "cat": "פנטזיה, דרמה, מתח, הרפתקאות",
+    "watch": "https://drive.google.com/file/d/1lomVCqBeMVbbnNQm99eVwFW46y-HwQAU/view",
+    "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

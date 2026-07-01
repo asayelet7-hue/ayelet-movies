@@ -21,7 +21,11 @@
         .btn-share { background: #1e293b; border-color: #38bdf8; color: #38bdf8; }
         .btn-share:hover { background: #38bdf8; color: black; }
         
-        /* כפתור סינון בעיות */
+        /* Cloud connection button */
+        .btn-cloud-setup { background: #1e293b; border-color: #10b981; color: #10b981; }
+        .btn-cloud-setup:hover { background: #10b981; color: black; }
+        .btn-cloud-setup.connected { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; }
+
         .btn-problems-toggle { background: #1e293b; border-color: #eab308; color: #eab308; }
         .btn-problems-toggle:hover { background: #eab308; color: black; }
         .btn-problems-toggle.active { background: #eab308; color: black; border-color: #eab308; font-weight: bold; }
@@ -41,9 +45,8 @@
         
         .card-badge { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.85); color: #e50914; padding: 3px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; border: 1px solid #e50914; }
         
-        /* עיצוב לתגיות בעיה בכרטיס */
         .card-problem-badge { background: #ef4444 !important; border-color: #fca5a5 !important; color: white !important; }
-        .problem-alert-text { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 6px; border-radius: 6px; font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
+        .problem-alert-text { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px; border-radius: 6px; font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
 
         .admin-controls { position: absolute; top: 20px; right: 20px; display: flex; gap: 5px; }
         .admin-btn { background: rgba(0, 0, 0, 0.8); border: 1px solid #444; color: white; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; }
@@ -85,12 +88,10 @@
         .ep-link { display: flex; justify-content: space-between; align-items: center; background: #2b303c; padding: 10px; border-radius: 5px; text-decoration: none; color: white; border: 1px solid #444; margin-bottom: 5px; font-size: 0.9rem; }
         .ep-link:hover { border-color: #e50914; }
 
-        /* קבוצת בחירת קטגוריות מרובות */
         .genres-selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #222; padding: 10px; border-radius: 5px; border: 1px solid #444; margin: 5px 0; }
         .genres-selection-grid label { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; }
         .genres-selection-grid input { width: auto; margin: 0; cursor: pointer; }
 
-        /* הודעות Toast */
         .toast-box { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 8px; border-right: 4px solid #e50914; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; font-weight: bold; font-size: 0.9rem; display: none; }
     </style>
 </head>
@@ -106,8 +107,9 @@
             <input type="text" id="globalSearch" placeholder="חיפוש סרט או סדרה..." oninput="render()">
         </div>
         <div class="auth-buttons" id="authBox">
-            <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף האתר</button>
-            <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ מצב בעיות</button>
+            <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף</button>
+            <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ בעיות</button>
+            <button id="cloudSetupBtn" class="btn-cloud-setup" onclick="openModal('cloudModal')">🔑 חיבור לענן</button>
             <button onclick="openModal('loginModal')">התחברות</button>
             <button onclick="openModal('regModal')">הרשמה</button>
         </div>
@@ -136,7 +138,7 @@
 </header>
 
 <div style="text-align: center; padding: 20px;">
-    <h1 id="welcomeTitle">הקרנה פרטית אילת 🎬</h1>
+    <h1>הקרנה פרטית אילת 🎬</h1>
     <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
         <button id="adminAddBtn" class="btn-action" style="width: auto; padding: 10px 30px; display: inline-block;" onclick="openAddModal()">+ הוסף תוכן חדש</button>
         <button class="btn-magic" onclick="openModal('recModal')">✨ מה מתחשק לי?</button>
@@ -144,13 +146,11 @@
     </div>
 </div>
 
-<div class="movie-grid" id="grid">
-    <div class="loading">טוען סרטים מהענן... ☁️</div>
-</div>
+<div class="movie-grid" id="grid"></div>
 
 <div id="addModal" class="modal">
     <h3 id="modalFormTitle">הוספת סרט/סדרה חדשה</h3>
-    <input type="hidden" id="edit-key">
+    <input type="hidden" id="edit-index">
     
     <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">שם הסרט/הסדרה *</label>
     <input type="text" id="m-name" placeholder="שם הסרט/סדרה">
@@ -234,6 +234,15 @@
     <button class="btn-cancel" onclick="closeModal('regModal')">סגור</button>
 </div>
 
+<div id="cloudModal" class="modal">
+    <h3>חיבור לענן GitHub ☁️</h3>
+    <p style="font-size:0.85rem; color:#aaa; text-align:right;">הזן מפתח גישה אישי (GitHub Token) כדי לאפשר סנכרון והעלאה של סרטים שכולם יוכלו לראות בזמן אמת:</p>
+    <input type="password" id="gitTokenInput" placeholder="הדבק כאן את ה-GitHub Token שלך...">
+    <button class="btn-action" style="background:#10b981;" onclick="saveGitHubToken()">שמור מפתח וסנכרן ענן ✔️</button>
+    <button class="btn-cancel" onclick="disconnectGitHubToken()" style="color:#ef4444; border-color:#ef4444;">נתק חיבור ענן ❌</button>
+    <button class="btn-cancel" onclick="closeModal('cloudModal')">סגור</button>
+</div>
+
 <div id="infoModal" class="modal">
     <div id="infoContent"></div>
     <button class="btn-action" onclick="closeModal('infoModal')">סגור</button>
@@ -249,7 +258,7 @@
 
 <div id="reportProblemModal" class="modal" style="z-index: 250;">
     <h3>דווח על בעיה בסרט</h3>
-    <input type="hidden" id="problemMovieKey">
+    <input type="hidden" id="problemMovieIndex">
     <p style="color: #aaa; font-size: 0.85rem; text-align: right;">אנא תאר את התקלה בסרט (למשל: הקישור לצפייה שבור / פרק 3 לא עובד):</p>
     <textarea id="problemDescriptionInput" placeholder="הסבר קצר על הבעיה..." required></textarea>
     <button class="btn-action" onclick="submitProblemReport()">שלח דיווח בעיה 🚨</button>
@@ -270,12 +279,46 @@
 </div>
 
 <script>
-    const FIREBASE_URL = "https://privatescreening-2c38d-default-rtdb.firebaseio.com/movies.json";
+    const GITHUB_OWNER = "asayelet7-hue";
+    const GITHUB_REPO = "ayelet-movies";
+    const GITHUB_PATH = "movies.json";
+    const RAW_URL = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${GITHUB_PATH}`;
+
+    const defaultMovies = [
+        {
+            name: "ספיידרמן: ברחבי ממדי העכביש",
+            img: "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=500",
+            desc: "מיילס מוראלס חוזר לפרק הבא בסאגת היקומים של ספיידרמן, ויוצא למשימה ברחבי המולטיוורס יחד עם גוון סטייסי וצוות חדש של אנשי עכביש.",
+            trailer: "https://www.youtube.com/watch?v=g4HbzUKLO60",
+            type: "סרט",
+            cat: "אקשן, אנימציה, משפחה, גיבורי על",
+            watch: "https://www.netflix.com",
+            rating: 5,
+            ratingCount: 1,
+            hasIssue: false,
+            issueText: ""
+        },
+        {
+            name: "דברים מוזרים",
+            img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=500",
+            desc: "סדרת מתח ומדע בדיוני המתרחשת בשנות ה-80, שבה קבוצה של ילדים נחשפת לניסויים ממשלתיים סודיים, כוחות על-טבעיים וילדה אחת מסתורית.",
+            trailer: "https://www.youtube.com/watch?v=b9EkMc79ZSU",
+            type: "סדרה",
+            cat: "מדע בדיוני, מתח, אימה",
+            watch: "https://www.netflix.com",
+            episodes: [
+                { name: "פרק 1: היעלמותו של וויל באיירס", url: "https://www.netflix.com" },
+                { name: "פרק 2: המוזרה מרחוב מייפל", url: "https://www.netflix.com" }
+            ],
+            rating: 4.8,
+            ratingCount: 5,
+            hasIssue: false,
+            issueText: ""
+        }
+    ];
 
     let movies = [];
-    let movieKeys = []; 
     let isAdmin = false;
-    let isConnected = false;
     let currentUser = null;
     let showOnlyProblems = false;
     
@@ -291,9 +334,7 @@
         const toast = document.getElementById('toast');
         toast.textContent = msg;
         toast.style.display = 'block';
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, 3000);
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
     }
 
     function customAlert(message) {
@@ -311,23 +352,38 @@
         openModal('confirmModal');
     }
 
-    function toggleAdminMode() {
-        if (!currentUser || (currentUser.id !== ADMIN_DATA.mail && currentUser.id !== ADMIN_DATA.phone)) {
-            customAlert("מצב מנהל זמין רק עבור מנהלי המערכת לאחר התחברות מתאימה.");
-            return;
-        }
-        isAdmin = !isAdmin;
-        const btn = document.getElementById('adminToggleBtn');
-        if(isAdmin) {
-            btn.textContent = "👑 מצב מנהל: פעיל";
-            btn.classList.add('active');
-            showToast("נכנסת למצב מנהל מערכת! כעת מופיעים כפתורי עריכה ומחיקה 👑");
+    function saveGitHubToken() {
+        const token = document.getElementById('gitTokenInput').value.trim();
+        if(!token) return customAlert("אנא הזן מפתח גישה תקין!");
+        localStorage.setItem('github_token', token);
+        showToast("מפתח הגישה נשמר בהצלחה! מסנכרן ענן... ☁️");
+        closeModal('cloudModal');
+        updateCloudButtonUI();
+        syncWithGitHubCloud();
+    }
+
+    function disconnectGitHubToken() {
+        localStorage.removeItem('github_token');
+        document.getElementById('gitTokenInput').value = "";
+        showToast("מפתח הגישה הוסר. האתר חזר למצב עבודה מקומי.");
+        closeModal('cloudModal');
+        updateCloudButtonUI();
+    }
+
+    function getGitHubToken() {
+        return localStorage.getItem('github_token') || "";
+    }
+
+    function updateCloudButtonUI() {
+        const btn = document.getElementById('cloudSetupBtn');
+        const token = getGitHubToken();
+        if(token) {
+            btn.textContent = "✔️ מחובר לענן (GitHub)";
+            btn.className = "btn-cloud-setup connected";
         } else {
-            btn.textContent = "👑 מצב מנהל: כבוי";
-            btn.classList.remove('active');
-            showToast("יצאת ממצב מנהל 🍿");
+            btn.textContent = "🔑 חיבור לענן";
+            btn.className = "btn-cloud-setup";
         }
-        render();
     }
 
     function toggleProblemsMode() {
@@ -335,7 +391,7 @@
         const btn = document.getElementById('problemsToggleBtn');
         if(showOnlyProblems) {
             btn.classList.add('active');
-            showToast("מציג כעת סרטים וסדרות עם תקלות בלבד ⚠️");
+            showToast("מציג סרטים עם תקלות בלבד ⚠️");
         } else {
             btn.classList.remove('active');
             showToast("חזרת להצגת כל הסרטים והסדרות");
@@ -363,7 +419,7 @@
 
     function openAddModal() {
         document.getElementById('modalFormTitle').innerText = "הוספת סרט/סדרה חדשה";
-        document.getElementById('edit-key').value = "";
+        document.getElementById('edit-index').value = "";
         document.getElementById('m-name').value = "";
         document.getElementById('m-img').value = "";
         document.getElementById('m-desc').value = "";
@@ -487,22 +543,77 @@
         render();
     }
 
-    async function loadMoviesFromCloud() {
+    async function loadMoviesFromGitHub() {
         try {
-            const response = await fetch(FIREBASE_URL);
-            const data = await response.json();
-            movies = [];
-            movieKeys = [];
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    movieKeys.push(key);
-                    movies.push(data[key]);
-                });
+            const response = await fetch(`${RAW_URL}?t=${Date.now()}`);
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
             }
-            render();
+            const data = await response.json();
+            if (data && Array.isArray(data)) {
+                movies = data;
+                saveToLocalStorage();
+            } else {
+                movies = defaultMovies;
+            }
         } catch (error) {
-            console.error(error);
-            document.getElementById('grid').innerHTML = '<div class="loading">שגיאה בטעינת הנתונים מהענן... ❌</div>';
+            console.warn("לא הצלחנו לקרוא מ-GitHub, טוען נתונים ממצב מקומי:", error);
+            const localData = localStorage.getItem('local_movies_db');
+            if (localData) {
+                movies = JSON.parse(localData);
+            } else {
+                movies = defaultMovies;
+            }
+        }
+        render();
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('local_movies_db', JSON.stringify(movies));
+    }
+
+    async function syncWithGitHubCloud() {
+        const token = getGitHubToken();
+        if (!token) {
+            showToast("⚠️ נשמר מקומית בלבד. הזן מפתח ענן בראש העמוד כדי לשתף עם כולם!");
+            return;
+        }
+
+        const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+        
+        try {
+            let sha = "";
+            const getRes = await fetch(url, {
+                headers: { "Authorization": `token ${token}` }
+            });
+            
+            if (getRes.ok) {
+                const fileData = await getRes.json();
+                sha = fileData.sha;
+            }
+
+            const putRes = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "עדכון ספריה אוטומטי מהאתר 🍿",
+                    content: btoa(unescape(encodeURIComponent(JSON.stringify(movies, null, 2)))),
+                    sha: sha || undefined
+                })
+            });
+
+            if (putRes.ok) {
+                showToast("הספריה עודכנה וסונכרנה עם הענן של GitHub! ☁️🎉");
+                loadMoviesFromGitHub();
+            } else {
+                showToast("⚠️ שגיאה בסנכרון לענן. ודא שהמפתח שהזנת תקין!");
+            }
+        } catch (e) {
+            console.error(e);
+            showToast("⚠️ שגיאה בתקשורת עם GitHub Cloud.");
         }
     }
 
@@ -518,20 +629,18 @@
         return list;
     }
 
-    async function saveMovie() {
+    function saveMovie() {
         const name = document.getElementById('m-name').value.trim();
         const img = document.getElementById('m-img').value.trim();
         const desc = document.getElementById('m-desc').value.trim();
         const trailer = document.getElementById('m-trailer').value.trim();
         const type = document.getElementById('m-type').value;
-        const editKey = document.getElementById('edit-key').value;
+        const editIndexStr = document.getElementById('edit-index').value;
 
         if(!name) return customAlert("נא למלא את שם הסרט או הסדרה!");
 
         const selectedGenres = [];
-        document.querySelectorAll('.genre-cb:checked').forEach(cb => {
-            selectedGenres.push(cb.value);
-        });
+        document.querySelectorAll('.genre-cb:checked').forEach(cb => { selectedGenres.push(cb.value); });
         const catValue = selectedGenres.length > 0 ? selectedGenres.join(', ') : "כללי";
 
         let watchLink = "";
@@ -553,14 +662,12 @@
         let currentHasIssue = false;
         let currentIssueText = "";
 
-        if (editKey) {
-            const index = movieKeys.indexOf(editKey);
-            if (index !== -1) {
-                currentRating = movies[index].rating || 5;
-                currentRatingCount = movies[index].ratingCount || 1;
-                currentHasIssue = movies[index].hasIssue || false;
-                currentIssueText = movies[index].issueText || "";
-            }
+        if (editIndexStr !== "") {
+            const idx = parseInt(editIndexStr);
+            currentRating = movies[idx].rating || 5;
+            currentRatingCount = movies[idx].ratingCount || 1;
+            currentHasIssue = movies[idx].hasIssue || false;
+            currentIssueText = movies[idx].issueText || "";
         }
 
         const movieData = {
@@ -578,61 +685,38 @@
             issueText: currentIssueText
         };
 
-        try {
-            let url = FIREBASE_URL;
-            let method = 'POST';
-
-            if(editKey) {
-                url = FIREBASE_URL.replace(".json", "/" + editKey + ".json");
-                method = 'PUT';
-            }
-
-            const response = await fetch(url, {
-                method: method,
-                body: JSON.stringify(movieData),
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if(response.ok) {
-                showToast("הספריה עודכנה בהצלחה! 🎉");
-                closeModal('addModal');
-                loadMoviesFromCloud();
-            } else {
-                customAlert("ארעה שגיאה בתקשורת עם השרת.");
-            }
-        } catch(e) {
-            customAlert("שגיאה בחיבור לענן.");
+        if (editIndexStr === "") {
+            movies.push(movieData);
+            showToast("התוכן נוסף לספריה בהצלחה! 🎉");
+        } else {
+            const idx = parseInt(editIndexStr);
+            movies[idx] = movieData;
+            showToast("התוכן עודכן בהצלחה! ✔️");
         }
+
+        saveToLocalStorage();
+        render();
+        closeModal('addModal');
+        syncWithGitHubCloud();
     }
 
-    async function deleteMovie(index, event) {
+    function deleteMovie(index, event) {
         if (event) event.stopPropagation();
-        const key = movieKeys[index];
-        customConfirm("האם אתה בטוח שברצונך למחוק תוכן זה לצמיתות מהענן?", async () => {
-            try {
-                const singleMovieUrl = FIREBASE_URL.replace(".json", "/" + key + ".json");
-                const response = await fetch(singleMovieUrl, {
-                    method: 'DELETE'
-                });
-                if(response.ok) {
-                    showToast("התוכן נמחק מהענן בהצלחה.");
-                    loadMoviesFromCloud();
-                } else {
-                    customAlert("לא ניתן למחוק את התוכן כעת.");
-                }
-            } catch(e) {
-                customAlert("שגיאה במחיקת התוכן מהשרת.");
-            }
+        customConfirm("האם אתה בטוח שברצונך למחוק תוכן זה מהאתר?", () => {
+            movies.splice(index, 1);
+            saveToLocalStorage();
+            render();
+            showToast("התוכן נמחק מהספריה.");
+            syncWithGitHubCloud();
         });
     }
 
     function editMovie(index, event) {
         if (event) event.stopPropagation();
         const movie = movies[index];
-        const key = movieKeys[index];
 
         document.getElementById('modalFormTitle').innerText = "עריכת סרט/סדרה";
-        document.getElementById('edit-key').value = key;
+        document.getElementById('edit-index').value = index;
         document.getElementById('m-name').value = movie.name || "";
         document.getElementById('m-img').value = movie.img || "";
         document.getElementById('m-desc').value = movie.desc || "";
@@ -675,64 +759,38 @@
 
     function openReportProblemForm(index, event) {
         if (event) event.stopPropagation();
-        const key = movieKeys[index];
-        document.getElementById('problemMovieKey').value = key;
+        document.getElementById('problemMovieIndex').value = index;
         document.getElementById('problemDescriptionInput').value = "";
         openModal('reportProblemModal');
     }
 
-    async function submitProblemReport() {
-        const key = document.getElementById('problemMovieKey').value;
+    function submitProblemReport() {
+        const index = parseInt(document.getElementById('problemMovieIndex').value);
         const problemText = document.getElementById('problemDescriptionInput').value.trim();
 
-        if (!problemText) {
-            return customAlert("אנא הזן תיאור קצר לתקלה בסרט.");
-        }
+        if (!problemText) return customAlert("אנא הזן תיאור קצר לתקלה.");
 
-        try {
-            const singleMovieUrl = FIREBASE_URL.replace(".json", "/" + key + ".json");
-            const response = await fetch(singleMovieUrl, {
-                method: 'PATCH',
-                body: JSON.stringify({ hasIssue: true, issueText: problemText }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-
-            if(response.ok) {
-                showToast("הדיווח התקבל! מודה לך על העזרה 🚨");
-                closeModal('reportProblemModal');
-                closeModal('infoModal');
-                loadMoviesFromCloud();
-            } else {
-                customAlert("שגיאה בשליחת הדיווח לענן.");
-            }
-        } catch(e) {
-            customAlert("לא ניתן להתחבר לענן כעת.");
-        }
+        movies[index].hasIssue = true;
+        movies[index].issueText = problemText;
+        
+        saveToLocalStorage();
+        render();
+        closeModal('reportProblemModal');
+        closeModal('infoModal');
+        showToast("דווח על תקלה בהצלחה! 🚨");
+        syncWithGitHubCloud();
     }
 
-    async function resolveProblem(index, event) {
+    function resolveProblem(index, event) {
         if (event) event.stopPropagation();
-        const key = movieKeys[index];
-        
-        customConfirm("האם לסמן את התקלה כפתורה ולהחזיר את הסרט למצב תקין?", async () => {
-            try {
-                const singleMovieUrl = FIREBASE_URL.replace(".json", "/" + key + ".json");
-                const response = await fetch(singleMovieUrl, {
-                    method: 'PATCH',
-                    body: JSON.stringify({ hasIssue: false, issueText: "" }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                if(response.ok) {
-                    showToast("התקלה סומנה כפתורה בהצלחה! ✔️");
-                    closeModal('infoModal');
-                    loadMoviesFromCloud();
-                } else {
-                    customAlert("שגיאה בעדכון השרת.");
-                }
-            } catch(e) {
-                customAlert("שגיאה בתקשורת עם הענן.");
-            }
+        customConfirm("האם לסמן את התקלה כפתורה?", () => {
+            movies[index].hasIssue = false;
+            movies[index].issueText = "";
+            saveToLocalStorage();
+            render();
+            closeModal('infoModal');
+            showToast("התקלה סומנה כפתורה! ✔️");
+            syncWithGitHubCloud();
         });
     }
 
@@ -740,7 +798,6 @@
         let id = type === 'login' ? document.getElementById('loginId').value.trim() : (document.getElementById('regEmail').value.trim() || document.getElementById('regPhone').value.trim());
         if(!id) return customAlert("אנא מלא את שדות החובה");
         
-        isConnected = true;
         currentUser = { name: type === 'reg' ? document.getElementById('regName').value.trim() || "חבר חדש" : "משתמש חבר", id: id };
         
         if (id === ADMIN_DATA.mail || id === ADMIN_DATA.phone) {
@@ -753,7 +810,6 @@
         }
         
         localStorage.setItem('hub_user', JSON.stringify(currentUser));
-        
         document.getElementById('personalRecBtn').style.display = 'inline-block';
         closeModal('loginModal'); 
         closeModal('regModal');
@@ -768,7 +824,7 @@
         tempInput.select();
         try {
             document.execCommand('copy');
-            showToast("קישור האתר הועתק ללוח! עכשיו אפשר לשלוח לחברים 🍿");
+            showToast("קישור האתר הועתק ללוח! 🍿");
         } catch(e) {
             showToast("לא ניתן להעתיק אוטומטית.");
         }
@@ -779,14 +835,13 @@
         const m = movies[index];
         let watchText = "";
         
-        if (m.watch) watchText += "💻 *לינק כללי/כל הפרקים:* " + m.watch + "\n";
+        if (m.watch) watchText += "💻 *לינק:* " + m.watch + "\n";
         if (m.type === 'סדרה' && m.episodes && m.episodes.length > 0) {
-            watchText += "*פרקים בודדים:*\n" + m.episodes.map(ep => "• " + ep.name + ": " + ep.url).join('\n');
+            watchText += "*פרקים:*\n" + m.episodes.map(ep => "• " + ep.name + ": " + ep.url).join('\n');
         }
 
-        const text = "🍿 *המלצה חמה מתוך הקרנה פרטית אילת!* 🍿\n\n*שם:* " + m.name + "\n*סוג:* " + m.type + "\n*ז'אנר:* " + m.cat + "\n*תקציר:* " + (m.desc || 'אין תקציר עדיין') + "\n\n🎬 *לינק לטריילר:* " + (m.trailer || 'אין') + "\n" + watchText;
-        const encodedText = encodeURIComponent(text);
-        window.open("https://api.whatsapp.com/send?text=" + encodedText, '_blank');
+        const text = "🍿 *המלצה מתוך הקרנה פרטית אילת!* 🍿\n\n*שם:* " + m.name + "\n*סוג:* " + m.type + "\n*ז'אנר:* " + m.cat + "\n*תקציר:* " + (m.desc || 'אין תקציר') + "\n\n🎬 *טריילר:* " + (m.trailer || 'אין') + "\n" + watchText;
+        window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), '_blank');
     }
 
     function toggleStatus(index, statusType) {
@@ -815,29 +870,22 @@
         render();
     }
 
-    async function toggleRate(index, ratingValue) {
+    function toggleRate(index, ratingValue) {
         const movie = movies[index];
-        const key = movieKeys[index];
-        
         let currentRating = movie.rating || 5;
         let count = movie.ratingCount || 1;
 
         const newCount = count + 1;
         const newRating = ((currentRating * count) + ratingValue) / newCount;
 
-        try {
-            const singleMovieUrl = FIREBASE_URL.replace(".json", "/" + key + ".json");
-            await fetch(singleMovieUrl, {
-                method: 'PATCH',
-                body: JSON.stringify({ rating: parseFloat(newRating.toFixed(1)), ratingCount: newCount }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            showToast(`דירגת ${ratingValue} כוכבים! ⭐`);
-            loadMoviesFromCloud();
-            closeModal('infoModal');
-        } catch(e) {
-            showToast("שגיאה בעדכון הדירוג.");
-        }
+        movies[index].rating = parseFloat(newRating.toFixed(1));
+        movies[index].ratingCount = newCount;
+        
+        saveToLocalStorage();
+        render();
+        closeModal('infoModal');
+        showToast(`דירגת ${ratingValue} כוכבים! ⭐`);
+        syncWithGitHubCloud();
     }
 
     function showDetails(index) {
@@ -861,19 +909,11 @@
                         </a>
                     `;
                 });
-                watchButtonHTML += `
-                    <div style="margin-top:15px; text-align:right;">
-                        <h4 style="color:#e50914; margin-bottom:8px;">פרקים בודדים:</h4>
-                        ${episodesHTML}
-                    </div>
-                `;
+                watchButtonHTML += `<div style="margin-top:15px; text-align:right;"><h4 style="color:#e50914; margin-bottom:8px;">פרקים בודדים:</h4>${episodesHTML}</div>`;
             }
         }
 
-        let trailerHTML = '';
-        if(movie.trailer) {
-            trailerHTML = `<a href="${movie.trailer}" target="_blank" class="btn-cancel" style="display:block; text-align:center; text-decoration:none; margin-top:8px;"><i class="fa-brands fa-youtube" style="color:red; margin-left:5px;"></i>צפייה בטריילר</a>`;
-        }
+        let trailerHTML = movie.trailer ? `<a href="${movie.trailer}" target="_blank" class="btn-cancel" style="display:block; text-align:center; text-decoration:none; margin-top:8px;"><i class="fa-brands fa-youtube" style="color:red; margin-left:5px;"></i>צפייה בטריילר</a>` : '';
 
         let starsHTML = '';
         for(let i=1; i<=5; i++) {
@@ -884,7 +924,7 @@
         if (movie.hasIssue) {
             issueDisplayHTML = `
                 <div class="problem-alert-text" style="text-align: right; padding: 10px; font-size: 0.9rem;">
-                    ⚠️ דווחה תקלה בסרט: ${movie.issueText || "שגיאה בקישור / לא עובד."}
+                    ⚠️ דווחה תקלה: ${movie.issueText || "שגיאה בקישור."}
                     ${isAdmin ? `<button class="btn-action" style="background: #16a34a; margin-top: 5px; font-size: 0.8rem; padding: 5px;" onclick="resolveProblem(${index}, event)">✅ סמן כתוקן</button>` : ''}
                 </div>
             `;
@@ -892,23 +932,22 @@
 
         contentDiv.innerHTML = `
             <h2 style="color:#e50914; margin-top:0;">${movie.name}</h2>
-            <img src="${movie.img}" style="width:100%; max-height:260px; object-fit:cover; border-radius:8px; border:1px solid #333;" alt="${movie.name}" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500'">
-            <p style="text-align:right; color:#ddd; font-size:0.95rem; line-height:1.5;">${movie.desc || 'אין תקציר זמין עבור כותר זה.'}</p>
+            <img src="${movie.img}" style="width:100%; max-height:260px; object-fit:cover; border-radius:8px; border:1px solid #333;" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500'">
+            <p style="text-align:right; color:#ddd; font-size:0.95rem; line-height:1.5;">${movie.desc || 'אין תקציר זמין.'}</p>
             <div style="text-align:right; font-size:0.85rem; color:#aaa;">ז'אנר: <strong>${movie.cat || 'כללי'}</strong> | סוג: <strong>${movie.type}</strong></div>
             
             ${issueDisplayHTML}
 
             <div style="background:#222; padding:10px; border-radius:8px; margin-top:15px; text-align:center;">
-                <div style="font-size:0.85rem; color:#aaa; margin-bottom:5px;">דרג את הכותר:</div>
                 <div class="rating">${starsHTML}</div>
-                <div style="font-size:0.8rem; color:#ffcc00; margin-top:4px;">דירוג ממוצע: ${movie.rating || '5.0'} (${movie.ratingCount || 1} הצבעות)</div>
+                <div style="font-size:0.8rem; color:#ffcc00; margin-top:4px;">דירוג: ${movie.rating || '5.0'} (${movie.ratingCount || 1} הצבעות)</div>
             </div>
 
             ${watchButtonHTML}
             ${trailerHTML}
             <div style="display: flex; gap: 5px; margin-top: 10px;">
-                <button class="btn-action" style="background:#25D366; margin-top:0; flex: 1;" onclick="shareMovieToWhatsApp(${index})"><i class="fa-brands fa-whatsapp"></i> שיתוף לוואטסאפ</button>
-                <button class="btn-cancel" style="background:#ef4444; border:none; color:white; margin-top:0; flex: 1;" onclick="openReportProblemForm(${index}, event)"><i class="fa-solid fa-triangle-exclamation"></i> דווח על בעיה</button>
+                <button class="btn-action" style="background:#25D366; margin-top:0; flex: 1;" onclick="shareMovieToWhatsApp(${index})"><i class="fa-brands fa-whatsapp"></i> וואטסאפ</button>
+                <button class="btn-cancel" style="background:#ef4444; border:none; color:white; margin-top:0; flex: 1;" onclick="openReportProblemForm(${index}, event)"><i class="fa-solid fa-triangle-exclamation"></i> דווח בעיה</button>
             </div>
         `;
         openModal('infoModal');
@@ -941,71 +980,21 @@
             }
         });
 
-        if(matched.length === 0) {
-            const randomMovie = movies[Math.floor(Math.random() * movies.length)];
-            resultDiv.innerHTML = `
-                <p style="font-size:0.9rem; color:#aaa; text-align:right;">לא מצאנו התאמה מדויקת, אך הנה המלצה אקראית מעולה:</p>
-                <div style="background:#222; padding:10px; border-radius:8px; text-align:right;">
-                    <strong>${randomMovie.name}</strong> (${randomMovie.type})<br>
-                    <button class="btn-action" style="padding:5px; font-size:0.8rem; margin-top:5px;" onclick="showDetails(${movies.indexOf(randomMovie)})">צפה בפרטים</button>
-                </div>
-            `;
-        } else {
-            const selected = matched[Math.floor(Math.random() * matched.length)];
-            resultDiv.innerHTML = `
-                <p style="font-size:0.9rem; color:#4ade80; font-weight:bold; text-align:right;">מצאנו התאמה מושלמת! 🎉</p>
-                <div style="background:#222; padding:10px; border-radius:8px; text-align:right;">
-                    <strong>${selected.name}</strong> (${selected.type}) - ${selected.cat}<br>
-                    <button class="btn-action" style="padding:5px; font-size:0.8rem; margin-top:5px;" onclick="showDetails(${movies.indexOf(selected)})">צפה בפרטים</button>
-                </div>
-            `;
-        }
+        const chosen = matched.length > 0 ? matched[Math.floor(Math.random() * matched.length)] : movies[Math.floor(Math.random() * movies.length)];
+        resultDiv.innerHTML = `
+            <div style="background:#222; padding:10px; border-radius:8px; text-align:right; margin-top:10px;">
+                <strong>${chosen.name}</strong> (${chosen.type})<br>
+                <button class="btn-action" style="padding:5px; font-size:0.8rem; margin-top:5px;" onclick="showDetails(${movies.indexOf(chosen)})">צפה בפרטים</button>
+            </div>
+        `;
     }
 
     function getPersonalRecommendation() {
-        if(!currentUser) return;
-        
-        let favoriteCategories = {};
-        movies.forEach(m => {
-            if(userWantToWatch.includes(m.name) && m.cat) {
-                const cats = m.cat.split(', ');
-                cats.forEach(c => {
-                    favoriteCategories[c] = (favoriteCategories[c] || 0) + 1;
-                });
-            }
-        });
-
-        let topCat = null;
-        let maxCount = 0;
-        Object.keys(favoriteCategories).forEach(cat => {
-            if(favoriteCategories[cat] > maxCount) {
-                maxCount = favoriteCategories[cat];
-                topCat = cat;
-            }
-        });
-
-        let candidates = movies.filter(m => {
-            const hasNotWatched = !userWatched.includes(m.name);
-            const matchesFavoriteCat = topCat ? m.cat.includes(topCat) : true;
-            return hasNotWatched && matchesFavoriteCat;
-        });
-
-        if(candidates.length === 0) {
-            candidates = movies.filter(m => !userWatched.includes(m.name));
-        }
-
-        if(candidates.length === 0) {
-            showToast("ראית כבר את כל הסרטים והסדרות באתר! כל הכבוד 🍿");
-            return;
-        }
-
-        candidates.sort((a,b) => (b.rating || 5) - (a.rating || 5));
-        const chosen = candidates[0];
-
-        showToast("המלצה מותאמת אישית מוכנה עבורך! 🌟");
-        setTimeout(() => {
-            showDetails(movies.indexOf(chosen));
-        }, 800);
+        if(!currentUser || movies.length === 0) return;
+        const candidates = movies.filter(m => !userWatched.includes(m.name));
+        const chosen = candidates.length > 0 ? candidates[Math.floor(Math.random() * candidates.length)] : movies[Math.floor(Math.random() * movies.length)];
+        showToast("המלצה אישית מוכנה בשבילך! ✨");
+        setTimeout(() => { showDetails(movies.indexOf(chosen)); }, 600);
     }
 
     function render() {
@@ -1014,27 +1003,14 @@
 
         const filteredMovies = movies.filter(m => {
             const tM = selectedTypes.length === 0 || selectedTypes.includes(m.type);
-            
-            let cM = true;
-            if (selectedCats.length > 0) {
-                cM = m.cat && selectedCats.some(selectedCat => m.cat.includes(selectedCat));
-            }
-            
+            const cM = selectedCats.length === 0 || (m.cat && selectedCats.some(c => m.cat.includes(c)));
             const sM = !searchQuery || (m.name && m.name.toLowerCase().includes(searchQuery));
-            
-            let pM = true;
-            if (showOnlyProblems) {
-                pM = m.hasIssue === true;
-            }
-
+            const pM = !showOnlyProblems || m.hasIssue === true;
             return tM && cM && sM && pM;
         });
 
-        if(filteredMovies.length === 0 && movies.length > 0) {
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">לא נמצאו תוצאות להתאמה הנוכחית...</p>';
-            return;
-        } else if (movies.length === 0) {
-            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">הספריה בענן ריקה.</p>';
+        if(filteredMovies.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #aaa; padding: 40px;">לא נמצאו תוצאות...</p>';
             return;
         }
 
@@ -1053,36 +1029,21 @@
                     watchAreaHtml += '<a href="' + m.watch + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:6px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">📂 כל הפרקים</a>';
                 }
                 if (m.episodes && m.episodes.length > 0) {
-                    watchAreaHtml += '<select style="margin:0; padding:6px; background:#2a6f97; color:white; border:none; border-radius:5px; font-size:0.8rem; text-align:center; cursor:pointer;" onchange="if(this.value) window.open(this.value, \'_blank\'); this.value=\'\';"><option value="">📺 פרק ספציפי...</option>';
-                    for (let j = 0; j < m.episodes.length; j++) {
-                        watchAreaHtml += '<option value="' + m.episodes[j].url + '">' + m.episodes[j].name + '</option>';
-                    }
+                    watchAreaHtml += '<select style="margin:0; padding:6px; background:#2a6f97; color:white; border:none; border-radius:5px; font-size:0.8rem; text-align:center; cursor:pointer;" onchange="if(this.value) window.open(this.value, \'_blank\'); this.value=\'\';"><option value="">📺 פרק...</option>';
+                    m.episodes.forEach(ep => { watchAreaHtml += '<option value="' + ep.url + '">' + ep.name + '</option>'; });
                     watchAreaHtml += '</select>';
-                }
-                if (!m.watch && (!m.episodes || m.episodes.length === 0)) {
-                    watchAreaHtml += '<span style="color:#666; padding:6px; font-size:0.8rem;">אין קישורים</span>';
                 }
             } else {
                 watchAreaHtml += '<a href="' + (m.watch || '#') + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">צפייה</a>';
             }
             watchAreaHtml += '</div>';
 
-            let starsHtml = "";
-            const roundedRating = Math.round(m.rating || 5);
-            for (let s = 1; s <= 5; s++) {
-                const icon = roundedRating >= s ? '★' : '☆';
-                starsHtml += '<span onclick="toggleRate(' + actualIndex + ', ' + s + ')">' + icon + '</span>';
-            }
-
-            let adminBtnHtml = '';
-            if(isAdmin) {
-                adminBtnHtml = `
-                    <div class="admin-controls">
-                        <button class="admin-btn" onclick="editMovie(${actualIndex}, event)" title="ערוך תוכן"><i class="fa-solid fa-pen"></i></button>
-                        <button class="admin-btn del" onclick="deleteMovie(${actualIndex}, event)" title="מחק תוכן"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            }
+            let adminBtnHtml = isAdmin ? `
+                <div class="admin-controls">
+                    <button class="admin-btn" onclick="editMovie(${actualIndex}, event)"><i class="fa-solid fa-pen"></i></button>
+                    <button class="admin-btn del" onclick="deleteMovie(${actualIndex}, event)"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            ` : '';
 
             let badgeClass = "card-badge";
             let problemIndicatorHTML = "";
@@ -1093,70 +1054,60 @@
 
             let trailerButtonHtml = m.trailer ? '<a href="' + m.trailer + '" target="_blank" style="background:#e50914; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center; flex:1;"><i class="fa-brands fa-youtube"></i> טריילר</a>' : '';
 
-            htmlString += '<div class="movie-card" onclick="showDetails(' + actualIndex + ')">' +
-                adminBtnHtml +
-                '<div>' +
-                    '<img src="' + m.img + '" onerror="this.src=\'https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500\'">' +
-                    '<span class="' + badgeClass + '">' + (m.hasIssue ? 'תקלה ⚠️' : m.type) + '</span>' +
-                    '<h3>' + m.name + '</h3>' +
-                    '<div class="rating">' + starsHtml + '<span class="avg-rating">(' + avg + ')</span></div>' +
-                    problemIndicatorHTML +
-                    '<button class="btn-action" style="background:#333; margin-bottom:5px;" onclick="event.stopPropagation(); showDetails(' + actualIndex + ')">ℹ️ פרטים נוספים</button>' +
-                    '<div style="display:flex; gap:5px; align-items:stretch;" onclick="event.stopPropagation();">' +
-                        trailerButtonHtml +
-                        watchAreaHtml +
-                    '</div>' +
-                '</div>' +
-                '<div class="status-actions" onclick="event.stopPropagation();">' +
-                    '<button class="status-btn ' + isWant + '" onclick="toggleStatus(' + actualIndex + ', \'want\')"><i class="fa-regular fa-bookmark"></i> רוצה לראות</button>' +
-                    '<button class="status-btn ' + isWatched + '" onclick="toggleStatus(' + actualIndex + ', \'watched\')"><i class="fa-regular fa-circle-check"></i> ראיתי</button>' +
-                '</div>' +
-            '</div>';
+            htmlString += `<div class="movie-card" onclick="showDetails(${actualIndex})">
+                ${adminBtnHtml}
+                <div>
+                    <img src="${m.img}" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500'">
+                    <span class="${badgeClass}">${m.hasIssue ? 'תקלה ⚠️' : m.type}</span>
+                    <h3>${m.name}</h3>
+                    <div class="rating">★ <span class="avg-rating">(${avg})</span></div>
+                    ${problemIndicatorHTML}
+                    <div style="display:flex; gap:5px; align-items:stretch; margin-top:5px;" onclick="event.stopPropagation();">
+                        ${trailerButtonHtml}
+                        ${watchAreaHtml}
+                    </div>
+                </div>
+                <div class="status-actions" onclick="event.stopPropagation();">
+                    <button class="status-btn ${isWant}" onclick="toggleStatus(${actualIndex}, 'want')"><i class="fa-regular fa-bookmark"></i> רוצה לראות</button>
+                    <button class="status-btn ${isWatched}" onclick="toggleStatus(${actualIndex}, 'watched')"><i class="fa-regular fa-circle-check"></i> ראיתי</button>
+                </div>
+            </div>`;
         }
         grid.innerHTML = htmlString;
     }
 
     function updateAuthHeader() {
         const authBox = document.getElementById('authBox');
+        let cloudBtnHTML = `<button id="cloudSetupBtn" class="btn-cloud-setup" onclick="openModal('cloudModal')">🔑 חיבור לענן</button>`;
+
         if (currentUser) {
             let adminLabel = isAdmin ? "👑 " : "";
-            
-            let adminToggleBtnHTML = '';
-            if (currentUser.id === ADMIN_DATA.mail || currentUser.id === ADMIN_DATA.phone) {
-                adminToggleBtnHTML = `<button id="adminToggleBtn" class="btn-admin-toggle" onclick="toggleAdminMode()">👑 מצב מנהל: ${isAdmin ? 'פעיל' : 'כבוי'}</button>`;
-            }
-
             authBox.innerHTML = `
-                <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף האתר</button>
-                <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ מצב בעיות</button>
-                ${adminToggleBtnHTML}
-                <span style="color:#4ade80; font-weight:bold; margin: 0 10px;">שלום, ${adminLabel}${currentUser.name}</span>
+                <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף</button>
+                <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ בעיות</button>
+                ${cloudBtnHTML}
+                <span style="color:#4ade80; font-weight:bold; margin: 0 10px;">${adminLabel}${currentUser.name}</span>
                 <button onclick="logout()">התנתק</button>
             `;
-
-            const adminBtn = document.getElementById('adminToggleBtn');
-            if (adminBtn && isAdmin) {
-                adminBtn.classList.add('active');
-            }
         } else {
             authBox.innerHTML = `
-                <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף האתר</button>
-                <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ מצב בעיות</button>
+                <button class="btn-share" onclick="shareWebsite()">🔗 שיתוף</button>
+                <button id="problemsToggleBtn" class="btn-problems-toggle" onclick="toggleProblemsMode()">⚠️ בעיות</button>
+                ${cloudBtnHTML}
                 <button onclick="openModal('loginModal')">התחברות</button>
                 <button onclick="openModal('regModal')">הרשמה</button>
             `;
         }
         
-        const problemsBtn = document.getElementById('problemsToggleBtn');
-        if (problemsBtn && showOnlyProblems) {
-            problemsBtn.classList.add('active');
+        updateCloudButtonUI();
+
+        if (showOnlyProblems && document.getElementById('problemsToggleBtn')) {
+            document.getElementById('problemsToggleBtn').classList.add('active');
         }
     }
 
     function logout() {
         localStorage.removeItem('hub_user');
-        currentUser = null;
-        isAdmin = false;
         location.reload();
     }
 
@@ -1164,13 +1115,11 @@
         const savedUser = localStorage.getItem('hub_user');
         if (savedUser) {
             currentUser = JSON.parse(savedUser);
-            if (currentUser.id === ADMIN_DATA.mail || currentUser.id === ADMIN_DATA.phone) {
-                isAdmin = true;
-            }
+            isAdmin = (currentUser.id === ADMIN_DATA.mail || currentUser.id === ADMIN_DATA.phone);
             document.getElementById('personalRecBtn').style.display = 'inline-block';
         }
         updateAuthHeader(); 
-        loadMoviesFromCloud();
+        loadMoviesFromGitHub();
     };
 </script>
 </body>

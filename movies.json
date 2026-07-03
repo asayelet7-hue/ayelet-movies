@@ -109,5 +109,19 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "משחקי הרעב",
+    "img": "https://upload.wikimedia.org/wikipedia/he/0/04/The_Hunger_Games.JPG",
+    "desc": "בעתיד דיסטופי, המדינה פאנם מחייבת כל מחוז לשלוח נציגים להשתתף ב\"משחקי הרעב\" – קרב הישרדות אכזרי המשודר בשידור חי. קטניס אוורדין מתנדבת להחליף את אחותה הקטנה ונאלצת להילחם על חייה נגד מתמודדים מיומנים, בעוד היא מנסה לשמור על האנושיות שלה. 🎯🔥",
+    "trailer": "https://www.youtube.com/watch?v=B28pMh2OMnk",
+    "type": "סרט",
+    "cat": "אקשן, מדע בדיוני, דרמה, מתח, הרפתקאות",
+    "watch": "https://drive.google.com/drive/folders/13umI5veKRNbJWsT2iuph6Ksg9qLNkGEv",
+    "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

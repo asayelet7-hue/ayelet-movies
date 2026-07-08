@@ -137,5 +137,19 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "לשחרר את שולי",
+    "img": "https://upload.wikimedia.org/wikipedia/he/c/cd/168472021_poster01.full.jpg",
+    "desc": "שולי הוא דמות מטורפת ומצחיקה, שנכנס לסיטואציות מביכות ומסעירות כשמנסים לשחרר אותו מההכלא שבו הוא נמצא. חוויות מצחיקות, מצבים מוזרים והרבה צחוק ממתינים לכל מי שיבחר לצפות. 😂🚔",
+    "trailer": "https://www.facebook.com/ynetnews/videos/%D7%9C%D7%A9%D7%97%D7%A8%D7%A8-%D7%90%D7%AA-%D7%A9%D7%95%D7%9C%D7%99/493146928410755/",
+    "type": "סרט",
+    "cat": "קומדיה, הרפתקאות",
+    "watch": "https://drive.google.com/file/d/1N2KdFdcqXBRIBnkVLx5vGSdtZN_strcA/view?usp=drivesdk",
+    "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

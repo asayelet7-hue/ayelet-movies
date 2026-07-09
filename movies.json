@@ -181,14 +181,33 @@
     "issueText": ""
   },
   {
-    "name": "פאודה עונות 1-4",
+    "name": "פאודה",
     "img": "https://img.mako.co.il/2025/07/23/fauda5poster_re_autoOrient_w.jpg",
     "desc": "הסדרה עוקבת אחרי סוכני ימ\"מ במלחמתם מול טרוריסטים, תוך שהיא מציגה את המאבק האלים והרגשי של שני הצדדים. הסדרה מתארת את חייהם של הלוחמים והמתמודדים מהצד הפלסטיני, במתח גבוה וסיטואציות מסוכנות. 🔫🌍",
     "trailer": "https://www.facebook.com/netflixisrael/videos/fauda/2242403059324208/?locale=he_IL",
-    "type": "סדרה",
+    "type": "סרט",
     "cat": "דרמה, מתח",
     "watch": "https://drive.google.com/drive/folders/10GCq4UYC53-t6npzolNPu1T5U5ZqrOTQ",
     "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
+  },
+  {
+    "name": "פאודה עונה 4 פרק 12",
+    "img": "https://img.mako.co.il/2025/07/23/fauda5poster_re_autoOrient_w.jpg",
+    "desc": "בקישור השני הפרק הזה לא טוב אז שמתי את זה",
+    "trailer": "",
+    "type": "סדרה",
+    "cat": "דרמה, מתח",
+    "watch": "",
+    "episodes": [
+      {
+        "name": "עונה 4 פרק 12",
+        "url": "https://drive.google.com/file/d/1ozMQpvckJgxEAQvswoevyzqrVLAMooNO/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,

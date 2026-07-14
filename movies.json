@@ -212,5 +212,19 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "החממה",
+    "img": "https://upload.wikimedia.org/wikipedia/he/5/5b/Hahamama.jpg?utm_source=he.wikipedia.org&utm_campaign=index&utm_content=original",
+    "desc": "בית ספר יוקרתי לתלמידים מחוננים מתגלה כמרכז לאימונים למשימות סודיות. בין יריבויות, אהבות וסכנות, החניכים נאלצים להתמודד עם קונספירציות מאיימות שישנו את חייהם. 🎭🔥",
+    "trailer": "https://www.youtube.com/watch?v=U1ZtDQ7AiKk",
+    "type": "סדרה",
+    "cat": "דרמה, מתח, הרפתקאות",
+    "watch": "https://drive.google.com/folderview?id=12BMZjpN4MDWtqqTWGRjzOhiXMw9ABloY",
+    "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

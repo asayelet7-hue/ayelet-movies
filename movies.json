@@ -254,5 +254,32 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "אחותי קפצה כיתה",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9U6q-AlC_5GAEMf95iffJSdPs0w2OTuls-yQcZ1VJUA&s=10",
+    "desc": "עידו, נער מתבגר שחייו בבית הספר מתנהלים על מי מנוחות, מקבל הפתעה לא צפויה כשאחותו הקטנה והמוכשרת, עלמה, קופצת כיתה ונכנסת לכיתה שלו. כעת הוא נאלץ להתמודד עם הסיטואציה המשעשעת והמביכה, תוך שמירה על מעמדו החברתי. 🎒😂",
+    "trailer": "",
+    "type": "סדרה",
+    "cat": "קומדיה, משפחה",
+    "watch": "",
+    "episodes": [
+      {
+        "name": "עונה 1",
+        "url": "https://drive.google.com/folderview?id=1-3QBElvPYXeBjMc_QxQxcU7RNmiL6aFa"
+      },
+      {
+        "name": "עונה 2",
+        "url": "https://drive.google.com/folderview?id=1-5e3kz0IcsbfbcSTOFAXHDT-_meIiBsC"
+      },
+      {
+        "name": "עונה 3",
+        "url": "https://drive.google.com/folderview?id=1-JDDPykjw_4soVv41RtS_tl5kOTH0kna"
+      }
+    ],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

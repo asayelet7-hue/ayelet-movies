@@ -281,5 +281,19 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "מואנה 1 ( מתורגם)",
+    "img": "https://cdn.cashcow.co.il/images/8a00cac1-0f3e-47fc-80ca-860c88011b57.jpg",
+    "desc": "הסיפור על מואנה, בת מיהוי, שמצאה את הכוחות להתמודד עם המכשולים הגדולים ביותר כשהיא יוצאת למסע כדי לשחרר את איי הבית שלה. סרט מרגש ומלא בקסם ים. 🌊🐚",
+    "trailer": "https://www.youtube.com/watch?v=kG-pxbwUxRk",
+    "type": "סרט",
+    "cat": "אנימציה, משפחה, הרפתקאות",
+    "watch": "https://drive.google.com/file/d/1utVcOQFtPt64kTa_gi_mUd2yAc_jNW9U/view?usp=drivesdk",
+    "episodes": [],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

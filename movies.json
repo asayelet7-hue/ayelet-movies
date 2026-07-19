@@ -349,7 +349,7 @@
     "episodes": [],
     "rating": 5,
     "ratingCount": 1,
-    "hasIssue": false,
-    "issueText": ""
+    "hasIssue": true,
+    "issueText": "הקישור לא עובד"
   }
 ]

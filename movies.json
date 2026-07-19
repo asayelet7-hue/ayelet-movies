@@ -379,19 +379,5 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
-  },
-  {
-    "name": "חיי עם משפחת וולטר עונה 1",
-    "img": "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500",
-    "desc": "",
-    "trailer": "",
-    "type": "סדרה",
-    "cat": "כללי",
-    "watch": "https://drive.google.com/drive/folders/1YvP8Dg6vv_hxbWxx_1op8oJ8t5zSzHT_",
-    "episodes": [],
-    "rating": 5,
-    "ratingCount": 1,
-    "hasIssue": false,
-    "issueText": ""
   }
 ]

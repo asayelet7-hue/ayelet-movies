@@ -272,8 +272,8 @@
     "name": "מואנה",
     "img": "https://cdn.cashcow.co.il/images/8a00cac1-0f3e-47fc-80ca-860c88011b57.jpg",
     "desc": "הסיפור על מואנה, בת מיהוי, שמצאה את הכוחות להתמודד עם המכשולים הגדולים ביותר כשהיא יוצאת למסע כדי לשחרר את איי הבית שלה. סרט מרגש ומלא בקסם ים. 🌊🐚",
-    "notes": "מתורגם",
-    "trailer": "https://www.disney.co.il/sratim/moana-2026",
+    "notes": "הכל מתורגם והטריילר הוא לסרט הראשון",
+    "trailer": "https://www.youtube.com/watch?v=IudYNbU6rvA",
     "type": "סרט",
     "cat": "אנימציה, משפחה, הרפתקאות",
     "watch": "",
@@ -400,7 +400,7 @@
     "img": "https://i0.wp.com/manatescapism.co.il/wp-content/uploads/2019/11/10-8.jpg?resize=1108%2C737&ssl=1",
     "desc": "נער יתום בשם הארי פוטר מגלה בגיל 11 כי הוא קוסם, מולדורמנט אשר ניסה להרוג אותו בילדותו. לאורך השנים בבית הספר הוגוורטס, הארי מתמודד עם לימודים, חברות, הרפתקאות, חשדות, ומרדפים אחרי הוולדמורט – אויבו הגדול – כשכל שנה מתגבר הסיכון והלחץ. ידידות, אומץ, הקרבה וגילוי עצמי במחזות של קסם.",
     "notes": "הכול מתורגם והטריילר הוא של הסרט הראשון",
-    "trailer": "https://www.edb.co.il/title/t0008723/video/",
+    "trailer": "",
     "type": "סרט",
     "cat": "פנטזיה, דרמה, מתח, הרפתקאות",
     "watch": "",
@@ -409,35 +409,35 @@
     "parts": [
       {
         "name": "1",
-        "url": "https://drive.google.com/file/d/1r8ZRd7bZbODktKPB7-R3pDWrBYcBSAto/view"
+        "url": ""
       },
       {
         "name": "2",
-        "url": "https://drive.google.com/file/d/1lomVCqBeMVbbnNQm99eVwFW46y-HwQAU/view"
+        "url": ""
       },
       {
         "name": "3",
-        "url": "https://drive.google.com/file/d/1SNOl1T4sr6fQ4plxT_0yqUHgDC6S4K3H/view"
+        "url": ""
       },
       {
         "name": "4",
-        "url": "https://drive.google.com/file/d/1Y92bDgcXTlkgMT6_VRdlcll-CUz4MV3l/view"
+        "url": ""
       },
       {
         "name": "5",
-        "url": "https://drive.google.com/file/d/1D01OIEmZikKuc-On8bYHdxL-XSbT74gf/view?usp=drivesdk"
+        "url": ""
       },
       {
         "name": "6",
-        "url": "https://drive.google.com/file/d/1Ummij16ZFeHv-NX6u6RCbMEsC4-7l7Jj/view?usp=drivesdk"
+        "url": ""
       },
       {
         "name": "7",
-        "url": "https://drive.google.com/file/d/16uZZEXkSS1oVUCfESsgSC7Harxr6mTTU/view?usp=drivesdk"
+        "url": ""
       },
       {
         "name": "7 ב",
-        "url": "https://drive.google.com/file/d/1_VviZNDGfRdUBzYYmsNj_TtlAl9n9Iqc/view?usp=drivesdk"
+        "url": ""
       }
     ],
     "rating": 5,

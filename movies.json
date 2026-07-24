@@ -1,16 +1,49 @@
 [
   {
-    "name": "אני לא מצליחה למחוק תתעלמו מזה",
-    "img": "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500",
-    "desc": "",
-    "notes": "",
+    "name": "הארי פוטר",
+    "img": "https://i0.wp.com/manatescapism.co.il/wp-content/uploads/2019/11/10-8.jpg?resize=1108%2C737&ssl=1",
+    "desc": "נער יתום בשם הארי פוטר מגלה בגיל 11 כי הוא קוסם, מולדורמנט אשר ניסה להרוג אותו בילדותו. לאורך השנים בבית הספר הוגוורטס, הארי מתמודד עם לימודים, חברות, הרפתקאות, חשדות, ומרדפים אחרי הוולדמורט – אויבו הגדול – כשכל שנה מתגבר הסיכון והלחץ. ידידות, אומץ, הקרבה וגילוי עצמי במחזות של קסם.",
+    "notes": "הכול מתורגם והטריילר הוא של הסרט הראשון",
     "trailer": "",
     "type": "סרט",
-    "cat": "כללי",
+    "cat": "פנטזיה, דרמה, מתח, הרפתקאות",
     "watch": "",
     "seasons": "",
     "episodes": [],
-    "parts": [],
+    "parts": [
+      {
+        "name": "1",
+        "url": ""
+      },
+      {
+        "name": "2",
+        "url": ""
+      },
+      {
+        "name": "3",
+        "url": ""
+      },
+      {
+        "name": "4",
+        "url": ""
+      },
+      {
+        "name": "5",
+        "url": ""
+      },
+      {
+        "name": "6",
+        "url": ""
+      },
+      {
+        "name": "7 א",
+        "url": ""
+      },
+      {
+        "name": "7 ב",
+        "url": ""
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,
@@ -286,14 +319,26 @@
     "issueText": ""
   },
   {
-    "name": "מואנה 1 ( מתורגם)",
+    "name": "מואנה",
     "img": "https://cdn.cashcow.co.il/images/8a00cac1-0f3e-47fc-80ca-860c88011b57.jpg",
     "desc": "הסיפור על מואנה, בת מיהוי, שמצאה את הכוחות להתמודד עם המכשולים הגדולים ביותר כשהיא יוצאת למסע כדי לשחרר את איי הבית שלה. סרט מרגש ומלא בקסם ים. 🌊🐚",
-    "trailer": "",
+    "notes": "מתורגם",
+    "trailer": "https://www.disney.co.il/sratim/moana-2026",
     "type": "סרט",
     "cat": "אנימציה, משפחה, הרפתקאות",
     "watch": "",
+    "seasons": "",
     "episodes": [],
+    "parts": [
+      {
+        "name": "סרט 1",
+        "url": "https://drive.google.com/file/d/1utVcOQFtPt64kTa_gi_mUd2yAc_jNW9U/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 2",
+        "url": "https://drive.google.com/file/d/1ADq3RdVxRp3NrgpDr5Y4qflQe40anQmC/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,

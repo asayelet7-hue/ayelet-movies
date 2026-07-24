@@ -92,7 +92,7 @@
         <div class="modal">
             <h3>חיבור לענן ☁️</h3>
             <p style="color: #10b981; text-align: center;">🔒 האתר מחובר לענן בצורה מאובטחת – כל סרט שתמחקו או תוסיפו יישמר לכולם!</p>
-            <div id="cloudAdminView" style="display:none; border-top: 1px solid var(--border); pt-10;">
+            <div id="cloudAdminView" style="display:none; border-top: 1px solid var(--border); margin-top:10px; padding-top:10px;">
                 <input type="password" id="gitTokenInput" placeholder="הדבק GitHub Token...">
                 <button class="btn-primary" style="width:100%; margin-top:8px;" onclick="saveGitHubToken()">שמור מפתח</button>
             </div>
@@ -102,25 +102,29 @@
 
     <script>
         let isAdmin = false;
-        let moviesData = [];
+        let contents = JSON.parse(localStorage.getItem('my_movies_data') || '[]');
         const REPO_OWNER = "asayelet7-hue";
         const REPO_NAME = "ayelet-movies";
         const FILE_PATH = "movies.json";
 
-        // טעינת הנתונים מ-GitHub
-        async function loadData() {
+        async function init() {
             try {
                 const res = await fetch(`https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}?t=${Date.now()}`);
-                if (res.ok) moviesData = await res.json();
+                if (res.ok) {
+                    const fetchedData = await res.json();
+                    if (Array.isArray(fetchedData) && fetchedData.length > 0) {
+                        contents = fetchedData;
+                        localStorage.setItem('my_movies_data', JSON.stringify(contents));
+                    }
+                }
             } catch (e) {
-                moviesData = JSON.parse(localStorage.getItem('my_movies_data') || '[]');
+                console.log("טוען מזיכרון מקומי...");
             }
             renderGrid();
         }
 
-        // שמירה וסינכרון ל-GitHub
         async function syncToGitHub() {
-            localStorage.setItem('my_movies_data', JSON.stringify(moviesData));
+            localStorage.setItem('my_movies_data', JSON.stringify(contents));
             renderGrid();
 
             const token = localStorage.getItem('github_token');
@@ -140,7 +144,7 @@
                     },
                     body: JSON.stringify({
                         message: "עדכון אוטומטי מהאתר",
-                        content: btoa(unescape(encodeURIComponent(JSON.stringify(moviesData, null, 2)))),
+                        content: btoa(unescape(encodeURIComponent(JSON.stringify(contents, null, 2)))),
                         sha: fileData.sha
                     })
                 });
@@ -152,15 +156,26 @@
         function renderGrid() {
             const grid = document.getElementById('contentGrid');
             grid.innerHTML = '';
-            moviesData.forEach((item, index) => {
+
+            if (contents.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-muted);">אין עדיין תכנים. לחצו על "הוסף תוכן" כדי להתחיל!</p>';
+                return;
+            }
+
+            contents.forEach((item, index) => {
+                const title = item.title || item.name || 'ללא שם';
+                const image = item.image || item.poster || item.img || 'https://via.placeholder.com/300';
+                const typeText = item.type === 'series' ? 'סדרה' : 'סרט';
+
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <img src="${item.image || 'https://via.placeholder.com/300'}" alt="${item.title}">
+                    <img src="${image}" alt="${title}">
                     <div class="card-body">
-                        <strong>${item.title}</strong>
-                        <button class="btn-primary" onclick="watchContent(${index})">צפייה</button>
-                        ${isAdmin ? `<button class="btn-danger" onclick="deleteContent(${index})">מחק סרט ❌</button>` : ''}
+                        <div style="font-weight:bold; font-size:1.1rem;">${title}</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">${typeText}</div>
+                        <button class="btn-primary" onclick="watchContent(${index})" style="margin-top:auto;">צפייה</button>
+                        ${isAdmin ? `<button class="btn-danger" onclick="deleteContent(${index})" style="margin-top:5px;">מחק</button>` : ''}
                     </div>
                 `;
                 grid.appendChild(card);
@@ -168,9 +183,29 @@
         }
 
         async function deleteContent(index) {
-            if (confirm('למחוק את הסרט הזה לכולם?')) {
-                moviesData.splice(index, 1);
+            if (confirm('בטוח שברצונך למחוק סרט זה?')) {
+                contents.splice(index, 1);
                 await syncToGitHub();
+            }
+        }
+
+        function handleTypeChange() {
+            const type = document.getElementById('typeSelect').value;
+            document.getElementById('movieUrlContainer').style.display = type === 'series' ? 'none' : 'block';
+            document.getElementById('seriesContainer').style.display = type === 'series' ? 'block' : 'none';
+        }
+
+        function generateSeasonInputs() {
+            const count = parseInt(document.getElementById('seasonsCount').value) || 1;
+            const container = document.getElementById('seasonsInputsContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                const input = document.createElement('input');
+                input.type = 'url';
+                input.className = 'season-url-input';
+                input.placeholder = `קישור לעונה ${i}`;
+                input.style.marginTop = '5px';
+                container.appendChild(input);
             }
         }
 
@@ -178,19 +213,37 @@
             const title = document.getElementById('titleInput').value.trim();
             const type = document.getElementById('typeSelect').value;
             const image = document.getElementById('imageInput').value.trim();
-            if (!title) return alert('נא להזין שם');
+
+            if (!title) return alert('אנא הזן שם');
 
             let newItem = { title, type, image };
-            if (type === 'movie') newItem.url = document.getElementById('movieUrlInput').value.trim();
-            
-            moviesData.push(newItem);
+
+            if (type === 'movie') {
+                newItem.url = document.getElementById('movieUrlInput').value.trim();
+            } else {
+                const seasonInputs = document.querySelectorAll('.season-url-input');
+                newItem.seasons = Array.from(seasonInputs).map(input => input.value.trim());
+            }
+
+            contents.push(newItem);
             await syncToGitHub();
             closeModal('addModal');
+
+            document.getElementById('titleInput').value = '';
+            document.getElementById('imageInput').value = '';
+            document.getElementById('movieUrlInput').value = '';
         }
 
         function watchContent(index) {
-            const item = moviesData[index];
-            if (item.url) window.open(item.url, '_blank');
+            const item = contents[index];
+            if (item.type === 'movie' || item.url) {
+                if (item.url) window.open(item.url, '_blank');
+                else alert('לא הוגדר קישור לצפייה');
+            } else if (item.seasons && item.seasons.length > 0) {
+                let choice = prompt(`לבחירת עונה (1 - ${item.seasons.length}):`, '1');
+                let sNum = parseInt(choice);
+                if (sNum && item.seasons[sNum - 1]) window.open(item.seasons[sNum - 1], '_blank');
+            }
         }
 
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -205,17 +258,19 @@
             const token = document.getElementById('gitTokenInput').value.trim();
             if (token) {
                 localStorage.setItem('github_token', token);
-                alert('המפתח נשמר!');
+                alert('המפתח נשמר בהצלחה!');
                 closeModal('cloudModal');
             }
         }
 
         function toggleAdminLogin() {
             if (!isAdmin) {
-                if (prompt('סיסמת מנהל:') === '1234') {
+                if (prompt('הזן סיסמת מנהל:') === '1234') {
                     isAdmin = true;
                     document.getElementById('adminLoginBtn').innerText = 'מנהל מחובר';
                     renderGrid();
+                } else {
+                    alert('סיסמה שגויה!');
                 }
             } else {
                 isAdmin = false;
@@ -224,7 +279,7 @@
             }
         }
 
-        window.onload = loadData;
+        window.onload = init;
     </script>
 </body>
 </html>

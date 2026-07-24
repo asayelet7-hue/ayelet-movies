@@ -345,14 +345,26 @@
     "issueText": ""
   },
   {
-    "name": "מאונה 2 ( מתורגם)",
-    "img": "",
-    "desc": "לאחר שקיבלה קריאה בלתי צפויה מאבותיה השמיימיים, מואנה יוצאת למסע נועז אל הימים הרחוקים של אוקיאניה. יחד עם מאווי וצוות מפתיע של יורדי ים, הם מתמודדים עם מים מסוכנים והרפתקאות שלא נראו כמותן.  ￼",
-    "trailer": "",
+    "name": "מאונה",
+    "img": "https://cdn.cashcow.co.il/images/8a00cac1-0f3e-47fc-80ca-860c88011b57.jpg",
+    "desc": "הסיפור על מואנה, בת מיהוי, שמצאה את הכוחות להתמודד עם המכשולים הגדולים ביותר כשהיא יוצאת למסע כדי לשחרר את איי הבית שלה. סרט מרגש ומלא בקסם ים. 🌊🐚",
+    "notes": "מדובב",
+    "trailer": "https://www.disney.co.il/sratim/moana-2026",
     "type": "סרט",
     "cat": "אנימציה, משפחה, הרפתקאות",
     "watch": "",
+    "seasons": "",
     "episodes": [],
+    "parts": [
+      {
+        "name": "סרט 1",
+        "url": "https://drive.google.com/file/d/1zLSp_Zt-EV5wWUxOm2MbSLGZV5_LBjKh/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 2",
+        "url": "https://drive.google.com/file/d/1WDEuC5mXDjWQ0OmI4PJ54szSPknIck0R/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,

@@ -273,7 +273,7 @@
     "img": "https://cdn.cashcow.co.il/images/8a00cac1-0f3e-47fc-80ca-860c88011b57.jpg",
     "desc": "הסיפור על מואנה, בת מיהוי, שמצאה את הכוחות להתמודד עם המכשולים הגדולים ביותר כשהיא יוצאת למסע כדי לשחרר את איי הבית שלה. סרט מרגש ומלא בקסם ים. 🌊🐚",
     "notes": "הכל מתורגם והטריילר הוא לסרט הראשון",
-    "trailer": "https://www.youtube.com/watch?v=IudYNbU6rvA",
+    "trailer": "",
     "type": "סרט",
     "cat": "אנימציה, משפחה, הרפתקאות",
     "watch": "",
@@ -282,11 +282,11 @@
     "parts": [
       {
         "name": "סרט 1",
-        "url": "https://drive.google.com/file/d/1utVcOQFtPt64kTa_gi_mUd2yAc_jNW9U/view?usp=drivesdk"
+        "url": ""
       },
       {
         "name": "סרט 2",
-        "url": "https://drive.google.com/file/d/1ADq3RdVxRp3NrgpDr5Y4qflQe40anQmC/view?usp=drivesdk"
+        "url": ""
       }
     ],
     "rating": 5,
@@ -409,35 +409,7 @@
     "parts": [
       {
         "name": "1",
-        "url": ""
-      },
-      {
-        "name": "2",
-        "url": ""
-      },
-      {
-        "name": "3",
-        "url": ""
-      },
-      {
-        "name": "4",
-        "url": ""
-      },
-      {
-        "name": "5",
-        "url": ""
-      },
-      {
-        "name": "6",
-        "url": ""
-      },
-      {
-        "name": "7",
-        "url": ""
-      },
-      {
-        "name": "7 ב",
-        "url": ""
+        "url": "https://drive.google.com/file/d/1r8ZRd7bZbODktKPB7-R3pDWrBYcBSAto/view"
       }
     ],
     "rating": 5,

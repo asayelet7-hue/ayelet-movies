@@ -21,7 +21,6 @@
         .btn-share { background: #1e293b; border-color: #38bdf8; color: #38bdf8; }
         .btn-share:hover { background: #38bdf8; color: black; }
         
-        /* Cloud connection button */
         .btn-cloud-setup { background: #1e293b; border-color: #10b981; color: #10b981; }
         .btn-cloud-setup:hover { background: #10b981; color: black; }
         .btn-cloud-setup.connected { background: rgba(16, 185, 129, 0.15); border-color: #10b981; color: #10b981; }
@@ -44,7 +43,6 @@
         .movie-card img { width: 100%; height: 240px; object-fit: cover; border-radius: 8px; cursor: pointer; }
         
         .card-badge { position: absolute; top: 20px; left: 20px; background: rgba(0, 0, 0, 0.85); color: #e50914; padding: 3px 8px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; border: 1px solid #e50914; }
-        
         .card-problem-badge { background: #ef4444 !important; border-color: #fca5a5 !important; color: white !important; }
         .problem-alert-text { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 4px; border-radius: 6px; font-size: 0.8rem; margin-top: 5px; font-weight: bold; }
 
@@ -91,6 +89,8 @@
         .genres-selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #222; padding: 10px; border-radius: 5px; border: 1px solid #444; margin: 5px 0; }
         .genres-selection-grid label { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; }
         .genres-selection-grid input { width: auto; margin: 0; cursor: pointer; }
+
+        .notes-box { background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; color: #7dd3fc; padding: 10px; border-radius: 8px; font-size: 0.85rem; margin-top: 10px; text-align: right; }
 
         .toast-box { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 12px 24px; border-radius: 8px; border-right: 4px solid #e50914; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 1000; font-weight: bold; font-size: 0.9rem; display: none; }
     </style>
@@ -161,6 +161,9 @@
     <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">תקציר העלילה</label>
     <textarea id="m-desc" placeholder="תקציר העלילה..."></textarea>
     
+    <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">הערות נוספות (אופציונלי)</label>
+    <textarea id="m-notes" placeholder="למשל: סרט באיכות HD, מומלץ מגיל 12, כתוביות בעברית..." style="height: 60px;"></textarea>
+
     <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">קישור לטריילר (YouTube)</label>
     <input type="text" id="m-trailer" placeholder="לינק לטריילר (YouTube)">
     
@@ -171,19 +174,38 @@
     </select>
     
     <div id="movieWatchField">
-        <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">קישור לצפייה ישירה בסרט</label>
-        <input type="text" id="m-watch" placeholder="לינק לצפייה ישירה">
+        <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">מבנה הסרט</label>
+        <select id="m-movie-structure" onchange="toggleMovieLinkType()">
+            <option value="single">סרט בודד (קישור אחד)</option>
+            <option value="multiple">סרט מרובה חלקים / סרטי המשך (חלק 1, חלק 2...)</option>
+        </select>
+
+        <div id="movieSingleLinkWrapper">
+            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">קישור לצפייה ישירה בסרט</label>
+            <input type="text" id="m-watch" placeholder="לינק לצפייה ישירה">
+        </div>
+
+        <div id="movieMultipleLinksWrapper" style="display:none;">
+            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">כמה חלקים/סרטי המשך יש?</label>
+            <input type="number" id="m-movie-parts-count" min="1" max="20" value="2" oninput="generateMoviePartInputsFromCount()" placeholder="מספר חלקים">
+            
+            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">רשימת החלקים והקישורים:</label>
+            <div class="episodes-box" id="moviePartsContainer"></div>
+        </div>
     </div>
 
     <div id="seriesEpisodesField" style="display:none;">
         <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">אפשרויות קישור לסדרה</label>
         <select id="m-series-link-type" onchange="toggleSeriesLinkType()">
-            <option value="single">קישור אחד לכל הסדרה (או לכל הפרקים יחד)</option>
+            <option value="single">קישור אחד לכל הסדרה</option>
             <option value="multiple">קישור נפרד לכל פרק</option>
         </select>
 
         <div id="seriesSingleLinkWrapper">
-            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">קישור לצפייה ישירה בסדרה</label>
+            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">מספר עונות בסדרה (אופציונלי)</label>
+            <input type="text" id="m-seasons-count" placeholder="למשל: 3 עונות / עונה 1">
+
+            <label style="font-size:0.8rem; color:#aaa; display:block; margin-top:5px;">קישור לצפייה בכל הסדרה</label>
             <input type="text" id="m-series-single-watch" placeholder="לינק לצפייה בכל הסדרה">
         </div>
 
@@ -288,7 +310,8 @@
         {
             name: "ספיידרמן: ברחבי ממדי העכביש",
             img: "https://images.unsplash.com/photo-1635805737707-575885ab0820?q=80&w=500",
-            desc: "מיילס מוראלס חוזר לפרק הבא בסאגת היקומים של ספיידרמן, ויוצא למשימה ברחבי המולטיוורס יחד עם גוון סטייסי וצוות חדש של אנשי עכביש.",
+            desc: "מיילס מוראלס חוזר לפרק הבא בסאגת היקומים של ספיידרמן, ויוצא למשימה ברחבי המולטיוורס.",
+            notes: "איכות צפייה גבוהה, מומלץ לחובבי גיבורי על!",
             trailer: "https://www.youtube.com/watch?v=g4HbzUKLO60",
             type: "סרט",
             cat: "אקשן, אנימציה, משפחה, גיבורי על",
@@ -301,9 +324,11 @@
         {
             name: "דברים מוזרים",
             img: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=500",
-            desc: "סדרת מתח ומדע בדיוני המתרחשת בשנות ה-80, שבה קבוצה של ילדים נחשפת לניסויים ממשלתיים סודיים, כוחות על-טבעיים וילדה אחת מסתורית.",
+            desc: "סדרת מתח ומדע בדיוני המתרחשת בשנות ה-80, שבה קבוצה של ילדים נחשפת לניסויים ממשלתיים סודיים.",
+            notes: "כתוביות בעברית מובנות בכל הפרקים.",
             trailer: "https://www.youtube.com/watch?v=b9EkMc79ZSU",
             type: "סדרה",
+            seasons: "4 עונות",
             cat: "מדע בדיוני, מתח, אימה",
             watch: "https://www.netflix.com",
             episodes: [
@@ -423,14 +448,19 @@
         document.getElementById('m-name').value = "";
         document.getElementById('m-img').value = "";
         document.getElementById('m-desc').value = "";
+        document.getElementById('m-notes').value = "";
         document.getElementById('m-trailer').value = "";
         document.getElementById('m-watch').value = "";
         document.getElementById('m-type').value = "סרט";
+        document.getElementById('m-movie-structure').value = "single";
+        document.getElementById('m-movie-parts-count').value = "2";
         document.getElementById('m-series-link-type').value = "single";
         document.getElementById('m-series-single-watch').value = "";
+        document.getElementById('m-seasons-count').value = "";
         document.getElementById('m-episodes-count').value = "1";
         document.getElementById('btnSubmitForm').innerText = "שמור בספריה";
         document.getElementById('episodesContainer').innerHTML = "";
+        document.getElementById('moviePartsContainer').innerHTML = "";
         
         document.querySelectorAll('.genre-cb').forEach(cb => cb.checked = false);
         
@@ -447,6 +477,48 @@
         } else {
             document.getElementById('movieWatchField').style.display = 'block';
             document.getElementById('seriesEpisodesField').style.display = 'none';
+            toggleMovieLinkType();
+        }
+    }
+
+    function toggleMovieLinkType() {
+        const linkType = document.getElementById('m-movie-structure').value;
+        if (linkType === 'single') {
+            document.getElementById('movieSingleLinkWrapper').style.display = 'block';
+            document.getElementById('movieMultipleLinksWrapper').style.display = 'none';
+        } else {
+            document.getElementById('movieSingleLinkWrapper').style.display = 'none';
+            document.getElementById('movieMultipleLinksWrapper').style.display = 'block';
+            generateMoviePartInputsFromCount();
+        }
+    }
+
+    function generateMoviePartInputsFromCount() {
+        const count = parseInt(document.getElementById('m-movie-parts-count').value) || 2;
+        const container = document.getElementById('moviePartsContainer');
+        
+        const currentInputs = container.querySelectorAll('.episode-row');
+        const savedValues = [];
+        currentInputs.forEach(row => {
+            savedValues.push({
+                name: row.querySelector('.movie-part-name').value,
+                url: row.querySelector('.movie-part-url').value
+            });
+        });
+
+        container.innerHTML = "";
+        for (let i = 1; i <= count; i++) {
+            const defaultName = `חלק ${i}`;
+            const nameVal = savedValues[i - 1] ? savedValues[i - 1].name : defaultName;
+            const urlVal = savedValues[i - 1] ? savedValues[i - 1].url : "";
+
+            const div = document.createElement('div');
+            div.className = 'episode-row';
+            div.innerHTML = `
+                <input type="text" placeholder="שם החלק" value="${nameVal}" class="movie-part-name" style="width: 35%; margin: 2px 0;">
+                <input type="text" placeholder="קישור לצפייה בחלק זה" value="${urlVal}" class="movie-part-url" style="width: 65%; margin: 2px 0;">
+            `;
+            container.appendChild(div);
         }
     }
 
@@ -557,7 +629,7 @@
                 movies = defaultMovies;
             }
         } catch (error) {
-            console.warn("לא הצלחנו לקרוא מ-GitHub, טוען נתונים ממצב מקומי:", error);
+            console.warn("טוען נתונים ממצב מקומי:", error);
             const localData = localStorage.getItem('local_movies_db');
             if (localData) {
                 movies = JSON.parse(localData);
@@ -575,7 +647,7 @@
     async function syncWithGitHubCloud() {
         const token = getGitHubToken();
         if (!token) {
-            showToast("⚠️ נשמר מקומית בלבד. הזן מפתח ענן בראש העמוד כדי לשתף עם כולם!");
+            showToast("נשמר בהצלחה באופן מקומי! 💾");
             return;
         }
 
@@ -599,21 +671,21 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    message: "עדכון ספריה אוטומטי מהאתר 🍿",
+                    message: "עדכון ספריה 🍿",
                     content: btoa(unescape(encodeURIComponent(JSON.stringify(movies, null, 2)))),
                     sha: sha || undefined
                 })
             });
 
             if (putRes.ok) {
-                showToast("הספריה עודכנה וסונכרנה עם הענן של GitHub! ☁️🎉");
+                showToast("הספריה סונכרנה עם הענן של GitHub! ☁️🎉");
                 loadMoviesFromGitHub();
             } else {
-                showToast("⚠️ שגיאה בסנכרון לענן. ודא שהמפתח שהזנת תקין!");
+                showToast("שגיאה בסנכרון. נשמר מקומית בלבד!");
             }
         } catch (e) {
             console.error(e);
-            showToast("⚠️ שגיאה בתקשורת עם GitHub Cloud.");
+            showToast("שגיאה בתקשורת ענן, נשמר מקומית.");
         }
     }
 
@@ -629,10 +701,23 @@
         return list;
     }
 
+    function getMoviePartsList() {
+        const names = document.querySelectorAll('.movie-part-name');
+        const urls = document.querySelectorAll('.movie-part-url');
+        const list = [];
+        names.forEach((el, i) => {
+            if(el.value.trim() && urls[i].value.trim()) {
+                list.push({ name: el.value.trim(), url: urls[i].value.trim() });
+            }
+        });
+        return list;
+    }
+
     function saveMovie() {
         const name = document.getElementById('m-name').value.trim();
         const img = document.getElementById('m-img').value.trim();
         const desc = document.getElementById('m-desc').value.trim();
+        const notes = document.getElementById('m-notes').value.trim();
         const trailer = document.getElementById('m-trailer').value.trim();
         const type = document.getElementById('m-type').value;
         const editIndexStr = document.getElementById('edit-index').value;
@@ -645,11 +730,19 @@
 
         let watchLink = "";
         let episodesList = [];
+        let moviePartsList = [];
+        let seasonsText = "";
         
         if (type === 'סרט') {
-            watchLink = document.getElementById('m-watch').value.trim();
+            const movieStructure = document.getElementById('m-movie-structure').value;
+            if (movieStructure === 'single') {
+                watchLink = document.getElementById('m-watch').value.trim();
+            } else {
+                moviePartsList = getMoviePartsList();
+            }
         } else {
             const linkType = document.getElementById('m-series-link-type').value;
+            seasonsText = document.getElementById('m-seasons-count').value.trim();
             if (linkType === 'single') {
                 watchLink = document.getElementById('m-series-single-watch').value.trim();
             } else {
@@ -674,11 +767,14 @@
             name: name,
             img: img || "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500",
             desc: desc,
+            notes: notes,
             trailer: trailer,
             type: type,
             cat: catValue,
             watch: watchLink,
+            seasons: seasonsText,
             episodes: episodesList,
+            parts: moviePartsList,
             rating: currentRating,
             ratingCount: currentRatingCount,
             hasIssue: currentHasIssue,
@@ -720,6 +816,7 @@
         document.getElementById('m-name').value = movie.name || "";
         document.getElementById('m-img').value = movie.img || "";
         document.getElementById('m-desc').value = movie.desc || "";
+        document.getElementById('m-notes').value = movie.notes || "";
         document.getElementById('m-trailer').value = movie.trailer || "";
         document.getElementById('m-type').value = movie.type || "סרט";
 
@@ -731,8 +828,28 @@
         toggleTypeFormFields();
 
         if (movie.type === 'סרט') {
-            document.getElementById('m-watch').value = movie.watch || "";
+            if (movie.parts && movie.parts.length > 0) {
+                document.getElementById('m-movie-structure').value = "multiple";
+                document.getElementById('m-movie-parts-count').value = movie.parts.length;
+                toggleMovieLinkType();
+                
+                setTimeout(() => {
+                    const pNames = document.querySelectorAll('.movie-part-name');
+                    const pUrls = document.querySelectorAll('.movie-part-url');
+                    movie.parts.forEach((p, i) => {
+                        if (pNames[i] && pUrls[i]) {
+                            pNames[i].value = p.name;
+                            pUrls[i].value = p.url;
+                        }
+                    });
+                }, 50);
+            } else {
+                document.getElementById('m-movie-structure').value = "single";
+                document.getElementById('m-watch').value = movie.watch || "";
+                toggleMovieLinkType();
+            }
         } else {
+            document.getElementById('m-seasons-count').value = movie.seasons || "";
             if (movie.episodes && movie.episodes.length > 0) {
                 document.getElementById('m-series-link-type').value = "multiple";
                 document.getElementById('m-episodes-count').value = movie.episodes.length;
@@ -836,8 +953,11 @@
         let watchText = "";
         
         if (m.watch) watchText += "💻 *לינק:* " + m.watch + "\n";
+        if (m.parts && m.parts.length > 0) {
+            watchText += "*חלקים:*\n" + m.parts.map(p => "• " + p.name + ": " + p.url).join('\n') + "\n";
+        }
         if (m.type === 'סדרה' && m.episodes && m.episodes.length > 0) {
-            watchText += "*פרקים:*\n" + m.episodes.map(ep => "• " + ep.name + ": " + ep.url).join('\n');
+            watchText += "*פרקים:*\n" + m.episodes.map(ep => "• " + ep.name + ": " + ep.url).join('\n') + "\n";
         }
 
         const text = "🍿 *המלצה מתוך הקרנה פרטית אילת!* 🍿\n\n*שם:* " + m.name + "\n*סוג:* " + m.type + "\n*ז'אנר:* " + m.cat + "\n*תקציר:* " + (m.desc || 'אין תקציר') + "\n\n🎬 *טריילר:* " + (m.trailer || 'אין') + "\n" + watchText;
@@ -893,11 +1013,26 @@
         const contentDiv = document.getElementById('infoContent');
 
         let watchButtonHTML = '';
-        if(movie.type === 'סרט' && movie.watch) {
-            watchButtonHTML = `<a href="${movie.watch}" target="_blank" class="btn-action" style="display:block; text-align:center; text-decoration:none;"><i class="fa-solid fa-circle-play"></i> צפייה ישירה בסרט</a>`;
+        if(movie.type === 'סרט') {
+            if (movie.watch) {
+                watchButtonHTML = `<a href="${movie.watch}" target="_blank" class="btn-action" style="display:block; text-align:center; text-decoration:none;"><i class="fa-solid fa-circle-play"></i> צפייה ישירה בסרט</a>`;
+            }
+            if(movie.parts && movie.parts.length > 0) {
+                let partsHTML = '';
+                movie.parts.forEach(p => {
+                    partsHTML += `
+                        <a href="${p.url}" target="_blank" class="ep-link">
+                            <span>${p.name}</span>
+                            <i class="fa-regular fa-circle-play" style="color:#e50914;"></i>
+                        </a>
+                    `;
+                });
+                watchButtonHTML += `<div style="margin-top:15px; text-align:right;"><h4 style="color:#e50914; margin-bottom:8px;">חלקי הסרט / סרטי המשך:</h4>${partsHTML}</div>`;
+            }
         } else if(movie.type === 'סדרה') {
             if (movie.watch) {
-                watchButtonHTML = `<a href="${movie.watch}" target="_blank" class="btn-action" style="display:block; text-align:center; text-decoration:none; margin-bottom: 10px;"><i class="fa-solid fa-circle-play"></i> כל הפרקים יחד</a>`;
+                let seasonBadge = movie.seasons ? ` (${movie.seasons})` : '';
+                watchButtonHTML = `<a href="${movie.watch}" target="_blank" class="btn-action" style="display:block; text-align:center; text-decoration:none; margin-bottom: 10px;"><i class="fa-solid fa-circle-play"></i> כל הפרקים יחד${seasonBadge}</a>`;
             }
             if(movie.episodes && movie.episodes.length > 0) {
                 let episodesHTML = '';
@@ -913,6 +1048,7 @@
             }
         }
 
+        let notesHTML = movie.notes ? `<div class="notes-box">💡 <strong>הערה:</strong> ${movie.notes}</div>` : '';
         let trailerHTML = movie.trailer ? `<a href="${movie.trailer}" target="_blank" class="btn-cancel" style="display:block; text-align:center; text-decoration:none; margin-top:8px;"><i class="fa-brands fa-youtube" style="color:red; margin-left:5px;"></i>צפייה בטריילר</a>` : '';
 
         let starsHTML = '';
@@ -934,7 +1070,8 @@
             <h2 style="color:#e50914; margin-top:0;">${movie.name}</h2>
             <img src="${movie.img}" style="width:100%; max-height:260px; object-fit:cover; border-radius:8px; border:1px solid #333;" onerror="this.src='https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500'">
             <p style="text-align:right; color:#ddd; font-size:0.95rem; line-height:1.5;">${movie.desc || 'אין תקציר זמין.'}</p>
-            <div style="text-align:right; font-size:0.85rem; color:#aaa;">ז'אנר: <strong>${movie.cat || 'כללי'}</strong> | סוג: <strong>${movie.type}</strong></div>
+            ${notesHTML}
+            <div style="text-align:right; font-size:0.85rem; color:#aaa; margin-top:8px;">ז'אנר: <strong>${movie.cat || 'כללי'}</strong> | סוג: <strong>${movie.type}</strong> ${movie.seasons ? `| <strong>${movie.seasons}</strong>` : ''}</div>
             
             ${issueDisplayHTML}
 
@@ -1026,7 +1163,8 @@
             let watchAreaHtml = '<div class="watch-box-layout">';
             if (m.type === 'סדרה') {
                 if (m.watch) {
-                    watchAreaHtml += '<a href="' + m.watch + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:6px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">📂 כל הפרקים</a>';
+                    let seasonLabel = m.seasons ? ` (${m.seasons})` : '';
+                    watchAreaHtml += '<a href="' + m.watch + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:6px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">📂 כל הפרקים' + seasonLabel + '</a>';
                 }
                 if (m.episodes && m.episodes.length > 0) {
                     watchAreaHtml += '<select style="margin:0; padding:6px; background:#2a6f97; color:white; border:none; border-radius:5px; font-size:0.8rem; text-align:center; cursor:pointer;" onchange="if(this.value) window.open(this.value, \'_blank\'); this.value=\'\';"><option value="">📺 פרק...</option>';
@@ -1034,7 +1172,14 @@
                     watchAreaHtml += '</select>';
                 }
             } else {
-                watchAreaHtml += '<a href="' + (m.watch || '#') + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">צפייה</a>';
+                if (m.watch) {
+                    watchAreaHtml += '<a href="' + m.watch + '" target="_blank" style="background:#4ea8de; color:white; text-decoration:none; padding:8px; border-radius:5px; font-size:0.8rem; display:block; text-align:center;">צפייה בסרט</a>';
+                }
+                if (m.parts && m.parts.length > 0) {
+                    watchAreaHtml += '<select style="margin:0; padding:6px; background:#2a6f97; color:white; border:none; border-radius:5px; font-size:0.8rem; text-align:center; cursor:pointer;" onchange="if(this.value) window.open(this.value, \'_blank\'); this.value=\'\';"><option value="">🎬 חלק...</option>';
+                    m.parts.forEach(p => { watchAreaHtml += '<option value="' + p.url + '">' + p.name + '</option>'; });
+                    watchAreaHtml += '</select>';
+                }
             }
             watchAreaHtml += '</div>';
 

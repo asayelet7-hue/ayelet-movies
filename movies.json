@@ -236,14 +236,26 @@
     "issueText": ""
   },
   {
-    "name": "מאונה 2 ( מתורגם)",
-    "img": "",
+    "name": "מאונה",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgTicr-HEDPXzWTUcTBZYEEhin3-VDwt3K2AcbWa0IkQ&s=10",
     "desc": "לאחר שקיבלה קריאה בלתי צפויה מאבותיה השמיימיים, מואנה יוצאת למסע נועז אל הימים הרחוקים של אוקיאניה. יחד עם מאווי וצוות מפתיע של יורדי ים, הם מתמודדים עם מים מסוכנים והרפתקאות שלא נראו כמותן.  ￼",
-    "trailer": "",
+    "notes": "הכול מתורגם והטריילר והתקציר אם של הסרט הראשון",
+    "trailer": "https://www.youtube.com/watch?v=kG-pxbwUxRk",
     "type": "סרט",
     "cat": "אנימציה, משפחה, הרפתקאות",
     "watch": "",
+    "seasons": "",
     "episodes": [],
+    "parts": [
+      {
+        "name": "סרט 1",
+        "url": "https://drive.google.com/file/d/1utVcOQFtPt64kTa_gi_mUd2yAc_jNW9U/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 2",
+        "url": "https://drive.google.com/file/d/1ADq3RdVxRp3NrgpDr5Y4qflQe40anQmC/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,

@@ -1,0 +1,9 @@
+{
+  "name": "סרטי אילת",
+  "short_name": "סרטים",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#333333",
+  "icons": []
+}

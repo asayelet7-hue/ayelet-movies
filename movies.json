@@ -292,7 +292,16 @@
     "watch": "",
     "seasons": "",
     "episodes": [],
-    "parts": [],
+    "parts": [
+      {
+        "name": "מתורגם",
+        "url": "https://drive.google.com/file/d/1_5O7ft1Q5N7HGkLKz6ja_gzh_sKhpRPo/view?usp=drivesdk"
+      },
+      {
+        "name": "מדובב",
+        "url": "https://drive.google.com/file/d/15mMIjdoCVyAmql62yy5K5SnzuAlAcIlj/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,

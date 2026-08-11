@@ -588,5 +588,47 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "שכחו אותי בבית",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRBwxKkrdnk_4qN5V9VjSRuce16fvtsVGbVerDwh8pS6g&s",
+    "desc": "עוקב אחר קווין מקאליסטר, ילד בן 8 שנשאר בטעות לבד בביתו בזמן שמשפחתו טסה לחופשת חג המולד בפריז. קווין נהנה בתחילה מהחופש, אך בהמשך נאלץ להגן על הבית מפני שני פורצים מגושמים באמצעות שורה של מלכודות מתוחכמות, עד שמשפחתו שבה ומאחדת איתו",
+    "notes": "הטריילר והתקציר אם לסרט הראשון",
+    "trailer": "https://www.youtube.com/watch?v=vwgzzQO2X5o",
+    "type": "סרט",
+    "cat": "קומדיה, משפחה, הרפתקאות",
+    "watch": "",
+    "seasons": "",
+    "episodes": [],
+    "parts": [
+      {
+        "name": "סרט 1",
+        "url": "https://drive.google.com/file/d/1Fx9v2kf6hayCVN3zJUYrARq5Afey_knc/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 2",
+        "url": "https://drive.google.com/file/d/1rOMDO23f4VTO_8O3Mj0AsZwV_k7FZ_bO/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 3",
+        "url": "https://drive.google.com/file/d/1WDpSwL_q7X4d-LB5OoFS0zZityqWj3NU/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 4",
+        "url": "https://drive.google.com/file/d/1iUPccPdUpr6UdP3LbtEMq0EU7q7czjLX/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 5",
+        "url": "https://drive.google.com/file/d/18oecmkJnT08xUUmKKo7Kzo0xpAN1m4Dl/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט 6",
+        "url": "https://drive.google.com/file/d/10TggeruX4QlhBXdb52AUKoS6aRx9QQVT/view?usp=drivesdk"
+      }
+    ],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

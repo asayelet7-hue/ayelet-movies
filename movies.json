@@ -474,5 +474,55 @@
     "ratingCount": 1,
     "hasIssue": false,
     "issueText": ""
+  },
+  {
+    "name": "כול סרטי ספיידרמן",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Vn4u6nocGeL3vnoZqiwTsPjd65dWSu37gkmoUrWr5xMNjQhSPKp6kV8&s=10",
+    "desc": "",
+    "notes": "",
+    "trailer": "",
+    "type": "סרט",
+    "cat": "מדע בדיוני, הרפתקאות",
+    "watch": "",
+    "seasons": "",
+    "episodes": [],
+    "parts": [
+      {
+        "name": "ספיידרמן  1",
+        "url": "https://drive.google.com/file/d/0BzYZ_LqmnH95MEtxTThjbzBybjg/view?usp=drivesdk&resourcekey=0-ZRwPwjfnmJ3QQrY5KXvcSg"
+      },
+      {
+        "name": "ספיידרמן 2",
+        "url": "https://drive.google.com/file/d/1ROMZpYTfspTPbIg1QvS7OvK36Pu0lr-k"
+      },
+      {
+        "name": "ספיידרמן 3",
+        "url": "https://drive.google.com/file/d/0BzYZ_LqmnH95R0JKUUhvbHlFYUk/view?usp=drivesdk&resourcekey=0-YycNUyKLO8JplqP5r8sHkw"
+      },
+      {
+        "name": "ספיידרמן : השיבה הביתנ",
+        "url": "https://drive.google.com/file/d/14UayLByCAB0fY0K22bJ6e4Fjdi3P9D6O/view?usp=drivesdk"
+      },
+      {
+        "name": "ספיידרמן: רחוק מהבית",
+        "url": "https://drive.google.com/file/d/1oWCYSH6aibVCt4mWGtCyj_oRr--7TzrD/view?usp=drivesdk"
+      },
+      {
+        "name": "ספיידרמן : אין דרך הביתה",
+        "url": "https://drive.google.com/file/d/1bqvI7ZRAJUIqVfGa8sdv8BVU2iyePVtd/view"
+      },
+      {
+        "name": "ספיידרמן : ממד העכביש",
+        "url": "https://drive.google.com/open?id=1hnXTjNl7ksa8oIJKo1l1RhmRMDS3IKQV"
+      },
+      {
+        "name": "ספיידרמן : ברחבי ממדי העכביש",
+        "url": "https://drive.google.com/file/d/1_vf4X7zHAQR1KyoFIfKY7hius4j28Qkj/view"
+      }
+    ],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
   }
 ]

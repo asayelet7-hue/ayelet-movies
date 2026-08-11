@@ -478,11 +478,11 @@
   {
     "name": "כול סרטי ספיידרמן",
     "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Vn4u6nocGeL3vnoZqiwTsPjd65dWSu37gkmoUrWr5xMNjQhSPKp6kV8&s=10",
-    "desc": "נוער יתום בשם פיטר פארקר ננשך על ידי עכביש רדיואקטיבי, ומקבל כוחות-על מדהימים של טיפוס, חוזק וחוש שישי. לאחר שטרגדיה משפחתית מלמדת אותו שעם כוח גדול באה אחריות גדולה, הוא הופך לגיבור-העל ספיידרמן ומקדיש את חייו להגנה על ניו יורק. לאורך השנים, הוא נאלץ לתמרן בין קשיי היום-יום, לימודים, אהבות מורכבות ושמירה על זהותו הסודית, בזמן שהוא מתמודד עם נבלים אכזריים שמנסים להרוס את חייו. פילוסופיית חיים, הקרבה עצמית, התבגרות ואומץ לב, המגיעים לשיאם כאשר יקומים מקבילים נפגשים והוא משלב כוחות עם גרסאות שונות של עצמו כדי להציל את העולם.",
+    "desc": "",
     "notes": "",
     "trailer": "https://www.youtube.com/watch?v=t06RUxPbp_c",
     "type": "סרט",
-    "cat": "אקשן, קומדיה, מדע בדיוני, הרפתקאות, גיבורי על",
+    "cat": "מדע בדיוני, הרפתקאות",
     "watch": "",
     "seasons": "",
     "episodes": [],
@@ -518,6 +518,32 @@
       {
         "name": "ספיידרמן : ברחבי ממדי העכביש",
         "url": "https://drive.google.com/file/d/1_vf4X7zHAQR1KyoFIfKY7hius4j28Qkj/view"
+      }
+    ],
+    "rating": 5,
+    "ratingCount": 1,
+    "hasIssue": false,
+    "issueText": ""
+  },
+  {
+    "name": "ספיידרמן המופלא",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3j1w4fRcvPa4gnZahXPFENxdD0IkNNPsgzvB4xQHCpQ&s",
+    "desc": "סיפור ההתבגרות של פיטר פארקר, שמגלה את כוחותיו החדשים כעכביש-על. הסרט עוקב אחרי התהליך שבו הוא הופך לגיבור, ומתחיל להילחם נגד פושעים, תוך שהוא מתמודד עם האובדן של אהוביו והאחריות שמגיעה עם כוחותיו. 🕷️🕸️",
+    "notes": "הטריילר והתקציר הוא של הסרט הראשון",
+    "trailer": "https://www.youtube.com/watch?v=gqYcp9vNw8o",
+    "type": "סרט",
+    "cat": "קומדיה, מדע בדיוני, הרפתקאות, גיבורי על",
+    "watch": "",
+    "seasons": "",
+    "episodes": [],
+    "parts": [
+      {
+        "name": "ספיידרמן המופלא 1",
+        "url": "https://drive.google.com/file/d/1lw5pr-Ul_4LRgvncJPzznn9wgI1Fecxt/view?usp=drivesdk"
+      },
+      {
+        "name": "ספיידרמן המופלא 2",
+        "url": "https://drive.google.com/file/d/13GbmyauAA8SiGphnVgIaW7IYx48AnJ0K/view?usp=drivesdk"
       }
     ],
     "rating": 5,

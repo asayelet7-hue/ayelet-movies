@@ -107,16 +107,25 @@
   },
   {
     "name": "לשחרר את שולי",
-    "img": "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=500",
+    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSWwo7azo5dwGgIn1yx4O3loVjn9ORE4NZIAVdlTVupfA&s=10",
     "desc": "שולי הוא דמות מטורפת ומצחיקה, שנכנס לסיטואציות מביכות ומסעירות כשמנסים לשחרר אותו מההכלא שבו הוא נמצא. חוויות מצחיקות, מצבים מוזרים והרבה צחוק ממתינים לכל מי שיבחר לצפות. 😂🚔",
     "notes": "",
     "trailer": "https://www.facebook.com/ynetnews/videos/%D7%9C%D7%A9%D7%97%D7%A8%D7%A8-%D7%90%D7%AA-%D7%A9%D7%95%D7%9C%D7%99/493146928410755/",
     "type": "סרט",
     "cat": "קומדיה, הרפתקאות",
-    "watch": "https://drive.google.com/file/d/1N2KdFdcqXBRIBnkVLx5vGSdtZN_strcA/view?usp=drivesdk",
+    "watch": "",
     "seasons": "",
     "episodes": [],
-    "parts": [],
+    "parts": [
+      {
+        "name": "סרט ראשון",
+        "url": "https://drive.google.com/file/d/1N2KdFdcqXBRIBnkVLx5vGSdtZN_strcA/view?usp=drivesdk"
+      },
+      {
+        "name": "סרט שני",
+        "url": "https://drive.google.com/file/d/1GuyMvWI8FZ2lr7-N8x2qDxWyD2uykWNa/view?usp=drivesdk"
+      }
+    ],
     "rating": 5,
     "ratingCount": 1,
     "hasIssue": false,
